@@ -19,13 +19,13 @@ public class Post {
     @Column(unique = false)
     private Long userId;
     @NotNull
-    @Size(min = 3, max = 255)
+    @Size(min = 3, max = 255, message = "Title must be between 3 and 255 characters long")
     @Column(unique = false)
     private String title;
 
     @NotNull
     @Column(unique = true)
-    @Size(min = 10, max = 4096)
+    @Size(min = 10, max = 4096, message = "URL must be between 10 and 4096 characters long")
     private String url;
     @NotNull
     @Column(unique = false)

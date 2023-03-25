@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity(name = "votes")
 public class Vote {
@@ -23,14 +24,14 @@ public class Vote {
     @Null
     @Column(unique = false)
     private Long commentId;
-    @Min(0)
     @NotNull
     @Column(unique = false)
+    @PositiveOrZero(message = "Upvote count must be positive or zero")
     private Long upVoteCount;
 
-    @Min(0)
     @NotNull
     @Column(unique = false)
+    @PositiveOrZero(message = "Downvote count must be positive or zero")
     private Long downVoteCount;
 
 

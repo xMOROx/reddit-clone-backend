@@ -3,6 +3,7 @@ package com.example.backendclonereddit.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -13,16 +14,17 @@ public class User {
     @Column(unique = true)
     private Long id;
 
-    @NotNull
-    @Size(min = 3, max = 255)
+    @NotNull(message = "`username` field is mandatory")
+    @Size(min = 3, max = 255, message = "Username must be between 3 and 255 characters long")
     @Column(unique = true)
     private String username;
-    @NotNull
-    @JsonIgnore
-    @Size(min = 8, max = 255)
+    @NotBlank(message = "Password is mandatory")
+    @NotNull(message = "`password` field is mandatory")
+    @Size(min = 8, max = 255, message = "Password must be between 8 and 255 characters long")
     private String password;
-    @Email
-    @NotNull
+    @NotBlank(message = "Email is mandatory")
+    @Email(message = "Email should be valid")
+    @NotNull(message = "`email` field is mandatory")
     @Column(unique = true)
     private String email;
 

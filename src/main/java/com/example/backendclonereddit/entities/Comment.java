@@ -25,7 +25,7 @@ public class Comment {
     private Long voteId;
     @Column(unique = false)
     @NotNull
-    @Size(min = 10, max = 4096)
+    @Size(min = 10, max = 4096, message = "Comment must be between 10 and 4096 characters long")
     private String text;
 
     public Comment(Long id, Long postId, Long userId, String text) {
