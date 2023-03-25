@@ -1,4 +1,4 @@
-package com.example.backendclonereddit.entity;
+package com.example.backendclonereddit.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
