@@ -1,12 +1,11 @@
 package com.example.backendclonereddit.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
+
+import java.util.List;
 
 @Entity(name = "posts")
 public class Post {
@@ -15,9 +14,10 @@ public class Post {
     @GeneratedValue
     @Column(unique = true)
     private Long id;
-    @NotNull
-    @Column(unique = false)
-    private Long userId;
+    @ManyToOne()
+    @JsonIgnore
+    private User user;
+
     @NotNull
     @Size(min = 3, max = 255, message = "Title must be between 3 and 255 characters long")
     @Column(unique = false)
@@ -27,23 +27,24 @@ public class Post {
     @Column(unique = true)
     @Size(min = 10, max = 4096, message = "URL must be between 10 and 4096 characters long")
     private String url;
-    @NotNull
-    @Column(unique = false)
-    private Long voteId;
 
-    @Null
-    @Column(unique = false)
-    private Long commentId;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Vote> votes;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Comment> comments;
     public Post() {
     }
 
-    public Post(Long id, Long userId, String title, String url, Long voteId) {
+    public Post(Long id, User user, String title, String url, List<Vote> votes, List<Comment> comments) {
         this.id = id;
-        this.userId = userId;
         this.title = title;
         this.url = url;
-        this.voteId = voteId;
+        this.user = user;
+        this.votes = votes;
+        this.comments = comments;
     }
 
     public Long getId() {
@@ -52,14 +53,6 @@ public class Post {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     public String getTitle() {
@@ -78,19 +71,27 @@ public class Post {
         this.url = url;
     }
 
-    public Long getVoteId() {
-        return voteId;
+    public User getUser() {
+        return user;
     }
 
-    public void setVoteId(Long voteId) {
-        this.voteId = voteId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Long getCommentId() {
-        return commentId;
+    public List<Vote> getVotes() {
+        return votes;
     }
 
-    public void setCommentId(Long commentId) {
-        this.commentId = commentId;
+    public void setVotes(List<Vote> votes) {
+        this.votes = votes;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }
