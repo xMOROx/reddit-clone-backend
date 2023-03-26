@@ -1,5 +1,6 @@
 package com.example.backendclonereddit.entities;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -8,14 +9,14 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 
 @Entity(name = "posts")
+@JsonFilter("postFilter")
 public class Post {
     @Id
-    @NotNull
     @GeneratedValue
     @Column(unique = true)
     private Long id;
     @ManyToOne()
-    @JsonIgnore
+//    @JsonIgnore
     private User user;
 
     @NotNull
@@ -24,9 +25,9 @@ public class Post {
     private String title;
 
     @NotNull
-    @Column(unique = true)
-    @Size(min = 10, max = 4096, message = "URL must be between 10 and 4096 characters long")
-    private String url;
+    @Column(unique = false)
+    @Size(min = 10, max = 4096, message = "Description must be between 10 and 4096 characters long")
+    private String description;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -38,10 +39,10 @@ public class Post {
     public Post() {
     }
 
-    public Post(Long id, User user, String title, String url, List<Vote> votes, List<Comment> comments) {
+    public Post(Long id, User user, String description, String url, List<Vote> votes, List<Comment> comments) {
         this.id = id;
         this.title = title;
-        this.url = url;
+        this.description = description;
         this.user = user;
         this.votes = votes;
         this.comments = comments;
@@ -63,12 +64,12 @@ public class Post {
         this.title = title;
     }
 
-    public String getUrl() {
-        return url;
+    public String getDescription() {
+        return description;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public User getUser() {

@@ -9,7 +9,6 @@ import jakarta.validation.constraints.Size;
 @Entity(name = "comments")
 public class Comment {
     @Id
-    @NotNull
     @GeneratedValue
     @Column(unique = true)
     private Long id;
