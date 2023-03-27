@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
+
 @Entity(name = "votes")
 public class Vote {
     @Id
@@ -66,5 +68,21 @@ public class Vote {
 
     public void setComment(Comment comment) {
         this.comment = comment;
+    }
+
+    public static Long countUpVotes(List<Vote> votes) {
+        return votes.stream().filter(Vote::isUpvote).count();
+    }
+
+    public static Long countDownVotes(List<Vote> votes) {
+        return votes.stream().filter(vote -> !vote.isUpvote()).count();
+    }
+
+    public void setUpvote(boolean upvote) {
+        isUpvote = upvote;
+    }
+
+    private boolean isUpvote() {
+        return isUpvote;
     }
 }
