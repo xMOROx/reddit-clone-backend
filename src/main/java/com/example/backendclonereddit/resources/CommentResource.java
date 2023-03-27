@@ -26,21 +26,28 @@ public class CommentResource {
         this.commentRepository = commentRepository;
         this.commentModelAssembler = commentModelAssembler;
     }
-
+    /**
+     * Get all comments
+     * @return List of comments
+     */
    @GetMapping(path = "")
-    public ResponseEntity<CollectionModel<CommentModel>> getAllComments() {
+   public ResponseEntity<CollectionModel<CommentModel>> getAllComments() {
             List<Comment> comments = commentRepository.findAll();
             return new ResponseEntity<>(
                     commentModelAssembler.toCollectionModel(comments), HttpStatus.OK);
-    }
-
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<CommentModel> getCommentById(@PathVariable Long id) {
+   }
+   /**
+    * Get comment by id
+    * @param id Comment id
+    * @return Comment model wprapped in ResponseEntity
+    * @throws CommentNotFoundException if comment not found
+    */
+   @GetMapping(path = "/{id}")
+   public ResponseEntity<CommentModel> getCommentById(@PathVariable Long id) throws CommentNotFoundException {
         return commentRepository.findById(id)
                 .map(commentModelAssembler::toModel)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new CommentNotFoundException("id-" + id));
-    }
-
+   }
 
 }

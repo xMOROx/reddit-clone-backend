@@ -291,6 +291,7 @@ public class UserResource {
 
 
     //    ----------------- HELPER METHODS -----------------
+
     /**
      * Check if a user exists with given id
       * @param id as Long
