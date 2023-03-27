@@ -23,6 +23,8 @@ public class PostModel extends RepresentationModel<PostModel> {
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
     private UserModel author;
-    private List<VoteModel> votes;
+    private Long upVotes;
+    private Long downVotes;
     private List<CommentModel> comments;
+    private List<VoteModel> votes;
 }

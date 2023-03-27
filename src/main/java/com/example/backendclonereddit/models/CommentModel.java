@@ -5,8 +5,9 @@ import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
+import java.time.LocalDateTime;
 import java.util.List;
-
+//TODO allow comment to comment and add comment to comment
 @Data
 @Builder
 @NoArgsConstructor
@@ -19,7 +20,11 @@ public class CommentModel extends RepresentationModel<CommentModel> {
     private String text;
     private PostModel post;
     private UserModel author;
-    private List<VoteModel> vote;
+    private Long upVotes;
+    private Long downVotes;
+    private LocalDateTime createdDate;
+    private LocalDateTime lastModifiedDate;
+    private List<VoteModel> votes;
 
 }
 
