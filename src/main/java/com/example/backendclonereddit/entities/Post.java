@@ -1,22 +1,23 @@
 package com.example.backendclonereddit.entities;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
+import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity(name = "posts")
-@JsonFilter("postFilter")
+@ToString(exclude = {"user", "votes", "comments"})
 public class Post {
     @Id
     @GeneratedValue
     @Column(unique = true)
     private Long id;
     @ManyToOne()
-//    @JsonIgnore
     private User user;
 
     @NotNull
@@ -28,24 +29,31 @@ public class Post {
     @Column(unique = false)
     @Size(min = 10, max = 4096, message = "Description must be between 10 and 4096 characters long")
     private String description;
-
+    @NotNull
+    @Past
+    private LocalDateTime createdDate;
+    @NotNull
+    @Past
+    private LocalDateTime lastModifiedDate;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
     private List<Vote> votes;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
     private List<Comment> comments;
+
+
     public Post() {
     }
 
-    public Post(Long id, User user, String description, String url, List<Vote> votes, List<Comment> comments) {
+    public Post(Long id, User user, String description, String url, List<Vote> votes, List<Comment> comments, LocalDateTime createdDate, LocalDateTime lastModifiedDate) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.user = user;
         this.votes = votes;
         this.comments = comments;
+        this.createdDate = createdDate;
+        this.lastModifiedDate = lastModifiedDate;
     }
 
     public Long getId() {
@@ -94,5 +102,21 @@ public class Post {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public LocalDateTime getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 }

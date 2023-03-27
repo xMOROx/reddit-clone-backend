@@ -3,8 +3,6 @@ package com.example.backendclonereddit.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
-import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity(name = "votes")
 public class Vote {
@@ -24,25 +22,15 @@ public class Vote {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private Comment comment;
-
     @NotNull
     @Column(unique = false)
-    @PositiveOrZero(message = "Upvote count must be positive or zero")
-    private Long upVoteCount;
-
-    @NotNull
-    @Column(unique = false)
-    @PositiveOrZero(message = "Downvote count must be positive or zero")
-    private Long downVoteCount;
-
+    private boolean isUpvote;
 
     public Vote() {
     }
 
-    public Vote(Long id, User user,Long upVoteCount, Long downVoteCount, Post post, Comment comment) {
+    public Vote(Long id, User user, Post post, Comment comment) {
         this.id = id;
-        this.upVoteCount = upVoteCount;
-        this.downVoteCount = downVoteCount;
         this.user = user;
         this.post = post;
         this.comment = comment;
@@ -54,23 +42,6 @@ public class Vote {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-
-    public Long getUpVoteCount() {
-        return upVoteCount;
-    }
-
-    public void setUpVoteCount(Long upVoteCount) {
-        this.upVoteCount = upVoteCount;
-    }
-
-    public Long getDownVoteCount() {
-        return downVoteCount;
-    }
-
-    public void setDownVoteCount(Long downVoteCount) {
-        this.downVoteCount = downVoteCount;
     }
 
     public User getUser() {

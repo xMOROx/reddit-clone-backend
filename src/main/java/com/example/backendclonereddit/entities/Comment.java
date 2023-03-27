@@ -24,7 +24,6 @@ public class Comment {
     @JsonIgnore
     private Vote vote;
 
-
     @Column(unique = false)
     @NotNull
     @Size(min = 10, max = 4096, message = "Comment must be between 10 and 4096 characters long")
