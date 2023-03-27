@@ -1,6 +1,7 @@
 package com.example.backendclonereddit.utils.models.assemblers;
 
 import com.example.backendclonereddit.entities.Comment;
+import com.example.backendclonereddit.entities.Vote;
 import com.example.backendclonereddit.models.CommentModel;
 import com.example.backendclonereddit.resources.CommentResource;
 import com.example.backendclonereddit.resources.UserResource;
@@ -23,18 +24,21 @@ public class CommentModelAssembler extends RepresentationModelAssemblerSupport<C
     }
 
     @Override
-    public @NotNull CommentModel toModel(Comment entity) {
+    public @NotNull CommentModel toModel(@NotNull Comment entity) {
         CommentModel commentModel = instantiateModel(entity);
 
         commentModel.add(linkTo(methodOn(CommentResource.class).getCommentById(entity.getId())).withSelfRel());
 
         commentModel.setId(entity.getId());
         commentModel.setText(entity.getText());
+        commentModel.setCreatedDate(entity.getCreatedDate());
+        commentModel.setLastModifiedDate(entity.getLastModifiedDate());
         commentModel.setAuthor(UserModelAssembler.toUserModel(entity.getUser()));
         commentModel.setPost(PostModelAssembler.toPostModel(entity.getPost()));
-//        commentModel.setVote(VoteModelAssembler.toVoteModel(entity.getVote()));
-
-            return commentModel;
+        commentModel.setUpVotes(Vote.countUpVotes(entity.getVotes()));
+        commentModel.setDownVotes(Vote.countDownVotes(entity.getVotes()));
+        
+        return commentModel;
     }
 
     @Override

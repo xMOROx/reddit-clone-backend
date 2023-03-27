@@ -1,6 +1,7 @@
 package com.example.backendclonereddit.utils.models.assemblers;
 
 import com.example.backendclonereddit.entities.Post;
+import com.example.backendclonereddit.entities.Vote;
 import com.example.backendclonereddit.models.PostModel;
 import com.example.backendclonereddit.resources.PostResource;
 import com.example.backendclonereddit.resources.UserResource;
@@ -35,6 +36,8 @@ public class PostModelAssembler extends RepresentationModelAssemblerSupport<Post
         postModel.setComments(CommentModelAssembler.toCommentModel(entity.getComments()));
         postModel.setLastModifiedDate(entity.getLastModifiedDate());
         postModel.setCreatedDate(entity.getCreatedDate());
+        postModel.setUpVotes(Vote.countUpVotes(entity.getVotes()));
+        postModel.setDownVotes(Vote.countDownVotes(entity.getVotes()));
 
         return postModel;
     }
