@@ -5,6 +5,7 @@ import com.example.backendclonereddit.models.PostModel;
 import com.example.backendclonereddit.resources.PostResource;
 import com.example.backendclonereddit.resources.UserResource;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,26 @@ public class PostModelAssembler extends RepresentationModelAssemblerSupport<Post
 
     @Override
     public @NotNull PostModel toModel(@NotNull Post entity) {
-        return null;
+        PostModel postModel = instantiateModel(entity);
+
+        postModel.add(linkTo(methodOn(PostResource.class).getPostById(entity.getId())).withSelfRel());
+
+        postModel.setId(entity.getId());
+        postModel.setTitle(entity.getTitle());
+        postModel.setDescription(entity.getDescription());
+        postModel.setAuthor(UserModelAssembler.toUserModel(entity.getUser()));
+        postModel.setComments(CommentModelAssembler.toCommentModel(entity.getComments()));
+        postModel.setLastModifiedDate(entity.getLastModifiedDate());
+        postModel.setCreatedDate(entity.getCreatedDate());
+
+        return postModel;
+    }
+
+    @Override
+    public @NotNull CollectionModel<PostModel> toCollectionModel(@NotNull Iterable<? extends Post> entities) {
+        CollectionModel<PostModel> postModels = super.toCollectionModel(entities);
+        postModels.add(linkTo(methodOn(PostResource.class).getAllPosts()).withSelfRel());
+        return postModels;
     }
 
     public static PostModel toPostModel(Post post) {
