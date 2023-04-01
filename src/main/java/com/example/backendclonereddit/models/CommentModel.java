@@ -25,6 +25,7 @@ public class CommentModel extends RepresentationModel<CommentModel> {
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
     private List<VoteModel> votes;
+    private List<CommentModel> childComments;
 
 }
 

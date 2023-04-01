@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
 public class VoteModel extends RepresentationModel<VoteModel> {
     private Long id;
     private Boolean isUpvote;
-
     private UserModel user;
     private PostModel post;
     private CommentModel comment;

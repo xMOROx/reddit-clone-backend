@@ -42,7 +42,21 @@ public class Comment {
     @Past
     private LocalDateTime lastModifiedDate;
 
-    public Comment(Long id, String text, Post post, List<Vote> votes, User user, LocalDateTime createdDate, LocalDateTime lastModifiedDate) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Comment parentComment;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Comment> childComments;
+
+    public Comment(Long id, String text,
+                   Post post,
+                   List<Vote> votes,
+                   User user,
+                   LocalDateTime createdDate,
+                   LocalDateTime lastModifiedDate,
+                   Comment parentComment, List<Comment> childComments) {
         this.id = id;
         this.text = text;
         this.post = post;
@@ -50,6 +64,8 @@ public class Comment {
         this.user = user;
         this.createdDate = createdDate;
         this.lastModifiedDate = lastModifiedDate;
+        this.parentComment = parentComment;
+        this.childComments = childComments;
     }
 
     public Comment() {
@@ -111,5 +127,21 @@ public class Comment {
 
     public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public Comment getParentComment() {
+        return parentComment;
+    }
+
+    public void setParentComment(Comment parentComment) {
+        this.parentComment = parentComment;
+    }
+
+    public List<Comment> getChildComments() {
+        return childComments;
+    }
+
+    public void setChildComments(List<Comment> childComments) {
+        this.childComments = childComments;
     }
 }

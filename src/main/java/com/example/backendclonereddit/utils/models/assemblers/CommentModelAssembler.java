@@ -35,8 +35,11 @@ public class CommentModelAssembler extends RepresentationModelAssemblerSupport<C
         commentModel.setLastModifiedDate(entity.getLastModifiedDate());
         commentModel.setAuthor(UserModelAssembler.toUserModel(entity.getUser()));
         commentModel.setPost(PostModelAssembler.toPostModel(entity.getPost()));
+
         commentModel.setUpVotes(Vote.countUpVotes(entity.getVotes()));
         commentModel.setDownVotes(Vote.countDownVotes(entity.getVotes()));
+
+        commentModel.setChildComments(CommentModelAssembler.toCommentModel(entity.getChildComments()));
         
         return commentModel;
     }
