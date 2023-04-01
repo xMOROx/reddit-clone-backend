@@ -40,7 +40,7 @@ public class CommentModelAssembler extends RepresentationModelAssemblerSupport<C
         commentModel.setDownVotes(Vote.countDownVotes(entity.getVotes()));
 
         commentModel.setChildComments(CommentModelAssembler.toCommentModel(entity.getChildComments()));
-        
+
         return commentModel;
     }
 

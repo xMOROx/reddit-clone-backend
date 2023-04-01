@@ -10,6 +10,7 @@ import com.example.backendclonereddit.models.UserModel;
 import com.example.backendclonereddit.repositories.CommentRepository;
 import com.example.backendclonereddit.repositories.PostRepository;
 import com.example.backendclonereddit.repositories.UserRepository;
+import com.example.backendclonereddit.utils.CheckExistence;
 import com.example.backendclonereddit.utils.exceptions.CommentNotFoundException;
 import com.example.backendclonereddit.utils.exceptions.PostNotFoundException;
 import com.example.backendclonereddit.utils.exceptions.UserNotFoundException;
@@ -17,7 +18,6 @@ import com.example.backendclonereddit.utils.models.assemblers.CommentModelAssemb
 import com.example.backendclonereddit.utils.models.assemblers.PostModelAssembler;
 import com.example.backendclonereddit.utils.models.assemblers.UserModelAssembler;
 import jakarta.validation.Valid;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -110,7 +110,7 @@ public class UserResource {
      */
     @DeleteMapping(path = "/{id}")
     public void deleteUserById(@PathVariable Long id) throws UserNotFoundException {
-        this.checkUserExists(id);
+        CheckExistence.checkUserExists(id, userRepository);
 
         userRepository.deleteById(id);
     }
@@ -124,7 +124,7 @@ public class UserResource {
      */
     @PutMapping(path = "/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User user) throws UserNotFoundException {
-        this.checkUserExists(id);
+        CheckExistence.checkUserExists(id, userRepository);
 
         user.setId(id);
 
@@ -143,7 +143,7 @@ public class UserResource {
      */
     @GetMapping(path = "/{id}/posts")
     public ResponseEntity<CollectionModel<PostModel>> getAllPostsByUserId(@PathVariable Long id) throws UserNotFoundException {
-        var user = this.checkUserExists(id);
+        var user = CheckExistence.checkUserExists(id, userRepository);
 
         List<Post> posts = user.get().getPosts();
 
@@ -162,9 +162,9 @@ public class UserResource {
      */
     @GetMapping(path = "/{id}/posts/{postId}")
     public ResponseEntity<PostModel> getPostById(@PathVariable Long id, @PathVariable Long postId) throws UserNotFoundException, PostNotFoundException {
-        this.checkUserExists(id);
+        CheckExistence.checkUserExists(id, userRepository);
 
-        var post = this.checkPostExists(postId);
+        var post = CheckExistence.checkPostExists(postId, postRepository);
 
         return post
                 .map(postModelAssembler::toModel)
@@ -182,7 +182,7 @@ public class UserResource {
      */
     @PostMapping(path = "/{id}/posts")
     public ResponseEntity<Post> createPost(@PathVariable Long id, @Valid @RequestBody Post post) throws UserNotFoundException {
-        var user = this.checkUserExists(id);
+        var user = CheckExistence.checkUserExists(id, userRepository);
 
         post.setUser(user.get());
 
@@ -205,8 +205,8 @@ public class UserResource {
      */
     @DeleteMapping(path = "/{id}/posts/{postId}")
     public void deleteUserPost(@PathVariable Long id, @PathVariable Long postId) throws UserNotFoundException, PostNotFoundException {
-        this.checkUserExists(id);
-        this.checkPostExists(postId);
+        CheckExistence.checkUserExists(id, userRepository);
+        CheckExistence.checkPostExists(postId, postRepository);
 
         postRepository.deleteById(postId);
     }
@@ -222,7 +222,7 @@ public class UserResource {
      */
     @GetMapping(path = "/{id}/comments")
     public ResponseEntity<CollectionModel<CommentModel>> getAllCommentsByUserId(@PathVariable Long id) throws UserNotFoundException {
-        var user = this.checkUserExists(id);
+        var user = CheckExistence.checkUserExists(id, userRepository);
 
         List<Comment> comments = user.get().getComments();
 
@@ -241,9 +241,9 @@ public class UserResource {
      */
     @GetMapping(path = "/{id}/comments/{commentId}")
     public ResponseEntity<CommentModel> getCommentById(@PathVariable Long id, @PathVariable Long commentId) throws UserNotFoundException, CommentNotFoundException {
-        this.checkUserExists(id);
+        CheckExistence.checkUserExists(id, userRepository);
 
-        var comment = this.checkCommentExists(commentId);
+        var comment = CheckExistence.checkCommentExists(commentId, commentRepository);
 
         return comment
                 .map(commentModelAssembler::toModel)
@@ -251,28 +251,28 @@ public class UserResource {
                 .orElseThrow(() -> new CommentNotFoundException("id-" + commentId + " for user id-" + id));
     }
 
-    /**
-     * Creates a comment for a user
-     * @param id user id
-     * @param comment comment to be created
-     * @return the created comment wrapped in ResponseEntity
-     * @throws UserNotFoundException if the user does not exist
-     */
-    @PostMapping(path = "/{id}/comments")
-    public ResponseEntity<Comment> createComment(@PathVariable Long id, @Valid @RequestBody Comment comment) throws UserNotFoundException {
-        var user = this.checkUserExists(id);
-
-        comment.setUser(user.get());
-
-        Comment savedComment =  commentRepository.save(comment);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest().path("/{id}")
-                .buildAndExpand(savedComment.getId())
-                .toUri();
-
-        return ResponseEntity.created(location).build();
-    }
+//    /**
+//     * Creates a comment for a user
+//     * @param id user id
+//     * @param comment comment to be created
+//     * @return the created comment wrapped in ResponseEntity
+//     * @throws UserNotFoundException if the user does not exist
+//     */
+//    @PostMapping(path = "/{id}/comments")
+//    public ResponseEntity<Comment> createComment(@PathVariable Long id, @Valid @RequestBody Comment comment) throws UserNotFoundException {
+//        var user = this.checkUserExists(id);
+//
+//        comment.setUser(user.get());
+//
+//        Comment savedComment =  commentRepository.save(comment);
+//
+//        URI location = ServletUriComponentsBuilder
+//                .fromCurrentRequest().path("/{id}")
+//                .buildAndExpand(savedComment.getId())
+//                .toUri();
+//
+//        return ResponseEntity.created(location).build();
+//    }
 
     /**
      * Delete a comment by user id and comment id
@@ -283,57 +283,11 @@ public class UserResource {
      */
     @DeleteMapping(path = "/{id}/comments/{commentId}")
     public void deleteUserComment(@PathVariable Long id, @PathVariable Long commentId) throws UserNotFoundException, CommentNotFoundException {
-        this.checkUserExists(id);
-        this.checkCommentExists(commentId);
+        CheckExistence.checkUserExists(id, userRepository);
+        CheckExistence.checkCommentExists(commentId, commentRepository);
 
         commentRepository.deleteById(commentId);
     }
 
 
-    //    ----------------- HELPER METHODS -----------------
-
-    /**
-     * Check if a user exists with given id
-      * @param id as Long
-     * @return Optional of User
-     * @throws UserNotFoundException if the user does not exist
-     */
-    private @NotNull Optional<User> checkUserExists(Long id) throws UserNotFoundException {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isEmpty()) {
-            throw new UserNotFoundException("id-" + id);
-        }
-
-        return user;
-    }
-
-    /**
-     * Check if a post exists with given id
-     * @param id as Long
-     * @return Optional of Post
-     * @throws PostNotFoundException if the post does not exist
-     */
-    private @NotNull Optional<Post> checkPostExists(Long id) throws PostNotFoundException {
-        Optional<Post> post = postRepository.findById(id);
-
-        if (post.isEmpty()) {
-            throw new PostNotFoundException("id-" + id);
-        }
-
-        return post;
-    }
-
-    /**
-     *  Check if a comment exists with given id
-     * @param commentId as Long
-     * @return Optional of Comment
-     * @throws CommentNotFoundException if the comment does not exist
-     */
-    private @NotNull Optional<Comment> checkCommentExists(Long commentId) throws CommentNotFoundException {
-        Optional<Comment> comment = commentRepository.findById(commentId);
-        if(comment.isEmpty()) {
-            throw new CommentNotFoundException("id-" + commentId);
-        }
-        return comment;
-    }
 }

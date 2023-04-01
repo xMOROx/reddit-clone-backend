@@ -39,7 +39,7 @@ public class CommentResource {
    /**
     * Get comment by id
     * @param id Comment id
-    * @return Comment model wprapped in ResponseEntity
+    * @return Comment model wrapped in ResponseEntity
     * @throws CommentNotFoundException if comment not found
     */
    @GetMapping(path = "/{id}")
