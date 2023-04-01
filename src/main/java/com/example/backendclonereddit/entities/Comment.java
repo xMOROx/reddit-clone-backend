@@ -2,16 +2,13 @@ package com.example.backendclonereddit.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 
 @Entity(name = "comments")
-public class Comment {
+public class Comment  extends CommentTemplate {
     @Id
     @GeneratedValue
     @Column(unique = true)
@@ -20,35 +17,9 @@ public class Comment {
     @JsonIgnore
     private Post post;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    private User user;
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<Vote> votes;
-
-    @Column(unique = false)
-    @NotNull
-    @Size(min = 10, max = 4096, message = "Comment must be between 10 and 4096 characters long")
-    private String text;
-    @Column(unique = false)
-    @NotNull
-    @Past
-    private LocalDateTime createdDate;
-
-    @Column(unique = false)
-    @NotNull
-    @Past
-    private LocalDateTime lastModifiedDate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    private Comment parentComment;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Comment> childComments;
+    private List<Reply> replies;
 
     public Comment(Long id, String text,
                    Post post,
@@ -56,16 +27,13 @@ public class Comment {
                    User user,
                    LocalDateTime createdDate,
                    LocalDateTime lastModifiedDate,
-                   Comment parentComment, List<Comment> childComments) {
+                   List<Reply> replies
+                   ) {
+
+        super(user, votes, text, createdDate, lastModifiedDate);
         this.id = id;
-        this.text = text;
         this.post = post;
-        this.votes = votes;
-        this.user = user;
-        this.createdDate = createdDate;
-        this.lastModifiedDate = lastModifiedDate;
-        this.parentComment = parentComment;
-        this.childComments = childComments;
+        this.replies = replies;
     }
 
     public Comment() {
@@ -80,15 +48,6 @@ public class Comment {
         this.id = id;
     }
 
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String description) {
-        this.text = description;
-    }
-
     public Post getPost() {
         return post;
     }
@@ -97,51 +56,12 @@ public class Comment {
         this.post = post;
     }
 
-    public List<Vote> getVotes() {
-        return votes;
+    public List<Reply> getReplies() {
+        return replies;
     }
 
-    public void setVotes(List<Vote> votes) {
-        this.votes = votes;
+    public void setReplies(List<Reply> replies) {
+        this.replies = replies;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public LocalDateTime getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
-    public Comment getParentComment() {
-        return parentComment;
-    }
-
-    public void setParentComment(Comment parentComment) {
-        this.parentComment = parentComment;
-    }
-
-    public List<Comment> getChildComments() {
-        return childComments;
-    }
-
-    public void setChildComments(List<Comment> childComments) {
-        this.childComments = childComments;
-    }
 }

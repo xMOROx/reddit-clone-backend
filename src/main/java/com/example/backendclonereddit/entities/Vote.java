@@ -3,6 +3,7 @@ package com.example.backendclonereddit.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 
 import java.util.List;
 
@@ -15,14 +16,17 @@ public class Vote {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
+    @Null
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
+    @Null
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
+    @Null
     private Comment comment;
     @NotNull
     @Column(unique = false)

@@ -7,24 +7,22 @@ import org.springframework.hateoas.server.core.Relation;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonRootName(value = "comment")
+@JsonRootName(value = "reply")
 @EqualsAndHashCode(callSuper = false)
-@Relation(collectionRelation = "comments")
-public class CommentModel extends RepresentationModel<CommentModel> {
+@Relation(collectionRelation = "replies")
+public class ReplyModel extends RepresentationModel<ReplyModel> {
     private Long id;
     private String text;
-    private PostModel post;
+    private CommentModel comment;
     private UserModel author;
     private Long upVotes;
     private Long downVotes;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
     private List<VoteModel> votes;
-    private List<ReplyModel> replies;
-
 }
-

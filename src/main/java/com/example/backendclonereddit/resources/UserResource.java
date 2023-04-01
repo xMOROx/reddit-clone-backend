@@ -27,6 +27,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+
 @RestController
 @RequestMapping(path = ApiPaths.UserCtrl.CTRL)
 public class UserResource {
@@ -58,7 +59,7 @@ public class UserResource {
 //    ----------------- GET ALL USERS -----------------
 
     /**
-     * Get all users
+     * Get all users using GET method
      * @return CollectionModel of UserModel wrapped in ResponseEntity
      */
     @GetMapping(path = "")
@@ -70,9 +71,9 @@ public class UserResource {
     }
 
     /**
-     * Get all posts by user id
+     * Get user by id using GET method
      * @param id as a PathVariable
-     * @return CollectionModel of PostModel wrapped in ResponseEntity
+     * @return UserModel wrapped in ResponseEntity
      * @throws UserNotFoundException if the user does not exist
      */
     @GetMapping(path = "/{id}")
@@ -86,9 +87,9 @@ public class UserResource {
     }
 
     /**
-     * Get all posts by user id
+     * Creates a new user using POST method
      * @param user as a RequestBody
-     * @return CollectionModel of PostModel wrapped in ResponseEntity
+     * @return User wrapped in ResponseEntity
      */
     @PostMapping(path ="")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
@@ -103,7 +104,7 @@ public class UserResource {
     }
 
     /**
-     *  Checks if a user exists
+     *  Deletes a user with the given id using DELETE method
      * @param id as a PathVariable
      * @throws UserNotFoundException if the user does not exist
 
@@ -124,9 +125,14 @@ public class UserResource {
      */
     @PutMapping(path = "/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User user) throws UserNotFoundException {
-        CheckExistence.checkUserExists(id, userRepository);
+        var userReceived =  CheckExistence.checkUserExists(id, userRepository).get();
 
-        user.setId(id);
+        userReceived.setUsername(user.getUsername());
+        userReceived.setPassword(user.getPassword());
+        userReceived.setEmail(user.getEmail());
+        userReceived.setComments(user.getComments());
+        userReceived.setPosts(user.getPosts());
+        userReceived.setVotes(user.getVotes());
 
         userRepository.save(user);
 
@@ -136,7 +142,7 @@ public class UserResource {
 //    ----------------- USER POSTS -----------------
 
     /**
-     *  Get all posts by user id
+     *  Get all posts by user id using GET method
      * @param id as a PathVariable
      * @return CollectionModel of PostModel wrapped in ResponseEntity
      * @throws UserNotFoundException if the user does not exist
@@ -153,7 +159,7 @@ public class UserResource {
     }
 
     /**
-     *  Get user post using user id and post id
+     *  Get user post using user id and post id using GET method
      * @param id as a PathVariable
      * @param postId as a PathVariable
      * @return PostModel wrapped in ResponseEntity
@@ -173,12 +179,11 @@ public class UserResource {
     }
 
     /**
-     * Creates a post for a user
+     * Creates a post for a user using POST method
      * @param id user id
      * @param post post to be created
      * @return the created post wrapped in ResponseEntity
      * @throws UserNotFoundException if the user does not exist
-     *
      */
     @PostMapping(path = "/{id}/posts")
     public ResponseEntity<Post> createPost(@PathVariable Long id, @Valid @RequestBody Post post) throws UserNotFoundException {
@@ -197,9 +202,39 @@ public class UserResource {
     }
 
     /**
-     * Delete a post by user id and post id
-     * @param id user id
+     * Update a post by user id and post id using PUT method
+     * @param id  user id
      * @param postId post id
+     * @param post post to be updated
+     * @return the updated post wrapped in ResponseEntity
+     * @throws UserNotFoundException if the user does not exist
+     * @throws PostNotFoundException if the post does not exist
+     */
+    @PutMapping(path = "/{id}/posts/{postId}")
+    public ResponseEntity<Post> updatePost(@PathVariable Long id, @PathVariable Long postId, @Valid @RequestBody Post post) throws UserNotFoundException, PostNotFoundException {
+        CheckExistence.checkUserExists(id, userRepository);
+
+        var postToUpdate = CheckExistence.checkPostExists(postId, postRepository);
+        var postReceived = postToUpdate.get();
+
+        postReceived.setId(postId);
+        postReceived.setTitle(post.getTitle());
+        postReceived.setDescription(post.getDescription());
+        postReceived.setUser(post.getUser());
+        postReceived.setComments(post.getComments());
+        postReceived.setVotes(post.getVotes());
+        postReceived.setCreatedDate(post.getCreatedDate());
+        postReceived.setLastModifiedDate(post.getLastModifiedDate());
+
+        postRepository.save(postToUpdate.get());
+
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Delete a post by user id and post id using DELETE method
+     * @param id user id
+     * @param postId post id to be deleted
      * @throws UserNotFoundException if the user does not exist
      * @throws PostNotFoundException if the post does not exist
      */
@@ -215,9 +250,9 @@ public class UserResource {
 //    ----------------- USER COMMENTS -----------------
 
     /**
-     * Get all comments by user id
+     * Get all comments by user id using GET method
      * @param id as a PathVariable
-     * @return List of comments
+     * @return CollectionModel of CommentModel wrapped in ResponseEntity
      * @throws UserNotFoundException if the user does not exist
      */
     @GetMapping(path = "/{id}/comments")
@@ -232,7 +267,7 @@ public class UserResource {
     }
 
     /**
-     * Get a comment by user id and comment id
+     * Get a comment by user id and comment id using GET method
      * @param id as a PathVariable
      * @param commentId as a PathVariable
      * @return CommentModel wrapped in ResponseEntity
@@ -250,29 +285,64 @@ public class UserResource {
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new CommentNotFoundException("id-" + commentId + " for user id-" + id));
     }
+    /**
+     * Creates a comment for a user for post using POST method
+     * @param id user id
+     * @param comment comment to be created
+     * @return the created comment wrapped in ResponseEntity
+     * @throws UserNotFoundException if the user does not exist
+     */
+    @PostMapping(path = "/{id}/posts/{postId}/comments")
+    public ResponseEntity<Comment> createCommentForPost(@PathVariable Long id, @PathVariable Long postId, @Valid @RequestBody Comment comment) throws UserNotFoundException, PostNotFoundException {
+        var user = CheckExistence.checkUserExists(id, userRepository);
+        var post = CheckExistence.checkPostExists(postId, postRepository);
 
-//    /**
-//     * Creates a comment for a user
-//     * @param id user id
-//     * @param comment comment to be created
-//     * @return the created comment wrapped in ResponseEntity
-//     * @throws UserNotFoundException if the user does not exist
-//     */
-//    @PostMapping(path = "/{id}/comments")
-//    public ResponseEntity<Comment> createComment(@PathVariable Long id, @Valid @RequestBody Comment comment) throws UserNotFoundException {
-//        var user = this.checkUserExists(id);
-//
-//        comment.setUser(user.get());
-//
-//        Comment savedComment =  commentRepository.save(comment);
-//
-//        URI location = ServletUriComponentsBuilder
-//                .fromCurrentRequest().path("/{id}")
-//                .buildAndExpand(savedComment.getId())
-//                .toUri();
-//
-//        return ResponseEntity.created(location).build();
-//    }
+        comment.setUser(user.get());
+        comment.setPost(post.get());
+
+        Comment savedComment =  commentRepository.save(comment);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(savedComment.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
+    }
+    /**
+     * Update a comment by user id and comment id
+     * @param id  user id
+     * @param postId post id
+     * @param commentId comment id
+     * @param comment comment to be updated
+     * @return the updated comment wrapped in ResponseEntity
+     * @throws UserNotFoundException if the user does not exist
+     * @throws PostNotFoundException if the post does not exist
+     * @throws CommentNotFoundException if the comment does not exist
+     */
+    @PutMapping(path = "/{id}/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<Comment> updateCommentForPost(@PathVariable Long id, @PathVariable Long postId, @PathVariable Long commentId, @Valid @RequestBody Comment comment) throws UserNotFoundException, PostNotFoundException, CommentNotFoundException {
+        CheckExistence.checkUserExists(id, userRepository);
+        CheckExistence.checkPostExists(postId, postRepository);
+
+        var commentToUpdate = CheckExistence.checkCommentExists(commentId, commentRepository);
+
+        var commentReceived = commentToUpdate.get();
+
+        commentReceived.setId(commentId);
+        commentReceived.setPost(comment.getPost());
+        commentReceived.setUser(comment.getUser());
+        commentReceived.setReplies(comment.getReplies());
+        commentReceived.setVotes(comment.getVotes());
+        commentReceived.setCreatedDate(comment.getCreatedDate());
+        commentReceived.setLastModifiedDate(comment.getLastModifiedDate());
+        commentReceived.setText(comment.getText());
+
+        commentRepository.save(commentToUpdate.get());
+
+        return ResponseEntity.ok().build();
+    }
+
 
     /**
      * Delete a comment by user id and comment id

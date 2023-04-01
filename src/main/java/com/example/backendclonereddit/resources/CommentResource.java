@@ -44,7 +44,8 @@ public class CommentResource {
     */
    @GetMapping(path = "/{id}")
    public ResponseEntity<CommentModel> getCommentById(@PathVariable Long id) throws CommentNotFoundException {
-        return commentRepository.findById(id)
+
+       return commentRepository.findById(id)
                 .map(commentModelAssembler::toModel)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new CommentNotFoundException("id-" + id));

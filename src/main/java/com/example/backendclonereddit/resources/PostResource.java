@@ -12,16 +12,12 @@ import com.example.backendclonereddit.utils.exceptions.CommentNotFoundException;
 import com.example.backendclonereddit.utils.exceptions.PostNotFoundException;
 import com.example.backendclonereddit.utils.models.assemblers.CommentModelAssembler;
 import com.example.backendclonereddit.utils.models.assemblers.PostModelAssembler;
-import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -87,27 +83,29 @@ public class PostResource {
 
     }
 
+    @PutMapping(path = "/{id}/comments/{commentId}")
+    public ResponseEntity<Comment> updateComment(@PathVariable Long id, @PathVariable Long commentId, @RequestBody Comment comment) throws PostNotFoundException, CommentNotFoundException {
+        CheckExistence.checkPostExists(id, postRepository);
+        CheckExistence.checkCommentExists(commentId, commentRepository);
+
+        comment.setId(commentId);
+        commentRepository.save(comment);
+        return new ResponseEntity<>(comment, HttpStatus.OK);
+    }
+
     /**
-     * Create comment
+     * Delete comment
      * @param id Post id
-     * @return Comment model wrapped in ResponseEntity
+     * @param commentId Comment id
      * @throws PostNotFoundException if post not found
+     * @throws CommentNotFoundException if comment not found
      */
-    @PostMapping(path = "/{id}/comments")
-    public ResponseEntity<Comment> createComment(@PathVariable Long id,@Valid @RequestBody Comment commentModel) throws PostNotFoundException {
-        Optional<Post> post = CheckExistence.checkPostExists(id, postRepository);
+    @DeleteMapping(path = "/{id}/comments/{commentId}")
+    public void deletePostComment(@PathVariable Long id, @PathVariable Long commentId) throws PostNotFoundException, CommentNotFoundException {
+        CheckExistence.checkPostExists(id, postRepository);
+        CheckExistence.checkCommentExists(commentId, commentRepository);
 
-        commentModel.setPost(post.get());
-
-        Comment comment = commentRepository.save(commentModel);
-
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(comment.getId())
-                .toUri();
-
-
-        return ResponseEntity.created(location).build();
+        commentRepository.deleteById(commentId);
     }
 
 }
