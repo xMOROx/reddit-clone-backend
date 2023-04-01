@@ -28,6 +28,11 @@ public class Vote {
     @JsonIgnore
     @Null
     private Comment comment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @Null
+    private Reply reply;
     @NotNull
     @Column(unique = false)
     private boolean isUpvote;
@@ -35,11 +40,13 @@ public class Vote {
     public Vote() {
     }
 
-    public Vote(Long id, User user, Post post, Comment comment) {
+    public Vote(Long id, User user, Post post, Comment comment, Reply reply, boolean isUpvote) {
         this.id = id;
         this.user = user;
         this.post = post;
         this.comment = comment;
+        this.reply = reply;
+        this.isUpvote = isUpvote;
     }
 
     public Long getId() {
@@ -88,5 +95,13 @@ public class Vote {
 
     private boolean isUpvote() {
         return isUpvote;
+    }
+
+    public Reply getReply() {
+        return reply;
+    }
+
+    public void setReply(Reply reply) {
+        this.reply = reply;
     }
 }

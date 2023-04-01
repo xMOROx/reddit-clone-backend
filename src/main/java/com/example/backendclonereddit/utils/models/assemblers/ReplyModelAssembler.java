@@ -19,16 +19,16 @@ public class ReplyModelAssembler extends RepresentationModelAssemblerSupport<Rep
     public @NotNull ReplyModel toModel(@NotNull Reply entity) {
         ReplyModel replyModel = instantiateModel(entity);
 
-        replyModel.add(linkTo(methodOn(ReplyResource.class).getReplyById(entity.getId())).withSelfRel());
-
-        replyModel.setId(entity.getId());
-        replyModel.setText(entity.getText());
-        replyModel.setCreatedDate(entity.getCreatedDate());
-        replyModel.setLastModifiedDate(entity.getLastModifiedDate());
-        replyModel.setAuthor(UserModelAssembler.toUserModel(entity.getUser()));
-
-        replyModel.setUpVotes(Vote.countUpVotes(entity.getVotes()));
-        replyModel.setDownVotes(Vote.countDownVotes(entity.getVotes()));
+//        replyModel.add(linkTo(methodOn(ReplyResource.class).getReplyById(entity.getId())).withSelfRel());
+//
+//        replyModel.setId(entity.getId());
+//        replyModel.setText(entity.getText());
+//        replyModel.setCreatedDate(entity.getCreatedDate());
+//        replyModel.setLastModifiedDate(entity.getLastModifiedDate());
+//        replyModel.setAuthor(UserModelAssembler.toUserModel(entity.getUser()));
+//
+//        replyModel.setUpVotes(Vote.countUpVotes(entity.getVotes()));
+//        replyModel.setDownVotes(Vote.countDownVotes(entity.getVotes()));
 
         return replyModel;
     }
