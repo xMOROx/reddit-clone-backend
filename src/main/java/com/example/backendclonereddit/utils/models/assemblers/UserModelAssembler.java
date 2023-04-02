@@ -2,7 +2,7 @@ package com.example.backendclonereddit.utils.models.assemblers;
 
 import com.example.backendclonereddit.entities.User;
 import com.example.backendclonereddit.models.UserModel;
-import com.example.backendclonereddit.resources.UserResource;
+import com.example.backendclonereddit.controllers.UserController;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
@@ -16,13 +16,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UserModelAssembler  extends RepresentationModelAssemblerSupport<User, UserModel> {
 
     public UserModelAssembler() {
-        super(UserResource.class, UserModel.class);
+        super(UserController.class, UserModel.class);
     }
     @Override
     public @NotNull UserModel toModel(@NotNull User entity) {
         UserModel userModel = instantiateModel(entity);
 
-        userModel.add(linkTo(methodOn(UserResource.class).getUserById(entity.getId())).withSelfRel());
+        userModel.add(linkTo(methodOn(UserController.class).getUserById(entity.getId())).withSelfRel());
         userModel.setId(entity.getId());
         userModel.setUsername(entity.getUsername());
         userModel.setEmail(entity.getEmail());
@@ -36,7 +36,7 @@ public class UserModelAssembler  extends RepresentationModelAssemblerSupport<Use
     @Override
     public @NotNull CollectionModel<UserModel> toCollectionModel(@NotNull Iterable<? extends User> entities) {
         CollectionModel<UserModel> userModels = super.toCollectionModel(entities);
-        userModels.add(linkTo(methodOn(UserResource.class).getAllUsers()).withSelfRel());
+        userModels.add(linkTo(methodOn(UserController.class).getAllUsers()).withSelfRel());
         return userModels;
     }
 

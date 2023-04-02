@@ -1,18 +1,16 @@
 package com.example.backendclonereddit.utils.models.assemblers;
 
 import com.example.backendclonereddit.entities.Reply;
-import com.example.backendclonereddit.entities.Vote;
 import com.example.backendclonereddit.models.ReplyModel;
-import com.example.backendclonereddit.resources.ReplyResource;
+import com.example.backendclonereddit.controllers.ReplyController;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public class ReplyModelAssembler extends RepresentationModelAssemblerSupport<Reply, ReplyModel> {
     public ReplyModelAssembler() {
-        super(ReplyResource.class, ReplyModel.class);
+        super(ReplyController.class, ReplyModel.class);
     }
 
     @Override
