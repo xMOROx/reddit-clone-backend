@@ -4,15 +4,13 @@ import com.example.backendclonereddit.configs.ApiPaths;
 import com.example.backendclonereddit.entities.Comment;
 import com.example.backendclonereddit.models.CommentModel;
 import com.example.backendclonereddit.repositories.CommentRepository;
+import com.example.backendclonereddit.utils.CheckExistence;
 import com.example.backendclonereddit.utils.exceptions.CommentNotFoundException;
 import com.example.backendclonereddit.utils.models.assemblers.CommentModelAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -50,5 +48,11 @@ public class CommentResource {
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new CommentNotFoundException("id-" + id));
    }
+
+   @PutMapping(path = "/{id}")
+    public ResponseEntity<Comment> updateComment(@PathVariable Long id, @RequestBody Comment comment) throws CommentNotFoundException {
+        var commentToUpdate = CheckExistence.checkCommentExists(id, commentRepository).get();
+
+    }
 
 }

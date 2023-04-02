@@ -136,7 +136,7 @@ public class UserResource {
 
         userRepository.save(user);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 //    ----------------- USER POSTS -----------------
@@ -228,7 +228,7 @@ public class UserResource {
 
         postRepository.save(postToUpdate.get());
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -340,7 +340,7 @@ public class UserResource {
 
         commentRepository.save(commentToUpdate.get());
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 

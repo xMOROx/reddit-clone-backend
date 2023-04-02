@@ -1,4 +1,4 @@
 package com.example.backendclonereddit.configs;
 
-public class SecurityConfig {
+public class SecurityConfig  {
 }

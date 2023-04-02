@@ -19,4 +19,28 @@ public final class ApiPaths {
         public static final String CTRL = BASE_PATH + "/users";
     }
 
+    public static final class SubredditCtrl {
+        public static final String CTRL = BASE_PATH + "/subreddits";
+    }
+
+    public static final class AuthCtrl {
+        public static final String CTRL = BASE_PATH + "/auth";
+    }
+
+    public static final class RefreshTokenCtrl {
+        public static final String CTRL = BASE_PATH + "/refresh-token";
+    }
+
+    public static final class VerificationTokenCtrl {
+        public static final String CTRL = BASE_PATH + "/verification-token";
+    }
+
+    public static final class PasswordResetTokenCtrl {
+        public static final String CTRL = BASE_PATH + "/password-reset-token";
+    }
+
+    public static final class CorsOriginLink {
+        public static final String LINK =  "http://localhost:8080";
+    }
+
 }
