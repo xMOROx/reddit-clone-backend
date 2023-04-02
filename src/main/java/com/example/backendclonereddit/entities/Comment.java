@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
-@Entity(name = "comments")
+@Entity(name = "Comments")
 public class Comment {
     @Id
     @GeneratedValue

@@ -22,24 +22,26 @@ public class User {
     @Size(min = 3, max = 255, message = "Username must be between 3 and 255 characters long")
     @Column(unique = true)
     private String username;
+
     @NotBlank(message = "Password is mandatory")
     @NotNull(message = "`password` field is mandatory")
     @Size(min = 8, max = 255, message = "Password must be between 8 and 255 characters long")
     private String password;
+
     @NotBlank(message = "Email is mandatory")
     @Email(message = "Email should be valid")
     @NotNull(message = "`email` field is mandatory")
     @Column(unique = true)
     private String email;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @JsonIgnore
     private List<Post> posts;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @JsonIgnore
     private List<Vote> votes;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @JsonIgnore
     private List<Comment> comments;
 

@@ -1,15 +1,16 @@
 package com.example.backendclonereddit.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.ToString;
+import net.minidev.json.annotate.JsonIgnore;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
-@Entity(name = "posts")
+@Entity(name = "Posts")
 @ToString(exclude = {"user", "votes", "comments"})
 public class Post {
     @Id
@@ -17,27 +18,35 @@ public class Post {
     @Column(unique = true)
     private Long id;
     @ManyToOne()
+    @JsonIgnore
     private User user;
 
     @NotNull
     @Size(min = 3, max = 255, message = "Title must be between 3 and 255 characters long")
+    @NotBlank(message = "Title is mandatory")
     @Column(unique = false)
     private String title;
 
     @NotNull
     @Column(unique = false)
     @Size(min = 10, max = 4096, message = "Description must be between 10 and 4096 characters long")
+    @NotNull(message = "`description` field is mandatory")
     private String description;
+
     @NotNull
     @Past
+    @JsonIgnore
     private LocalDateTime createdDate;
     @NotNull
     @Past
+    @JsonIgnore
     private LocalDateTime lastModifiedDate;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Vote> votes;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Comment> comments;
 
 
