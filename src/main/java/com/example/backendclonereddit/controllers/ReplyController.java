@@ -1,8 +1,8 @@
-package com.example.backendclonereddit.resources;
+package com.example.backendclonereddit.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ReplyResource {
+public class ReplyController {
 
 }

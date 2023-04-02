@@ -1,10 +1,9 @@
-package com.example.backendclonereddit.resources;
+package com.example.backendclonereddit.controllers;
 
 import com.example.backendclonereddit.configs.ApiPaths;
 import com.example.backendclonereddit.entities.Comment;
 import com.example.backendclonereddit.models.CommentModel;
-import com.example.backendclonereddit.repositories.CommentRepository;
-import com.example.backendclonereddit.utils.CheckExistence;
+import com.example.backendclonereddit.services.CommentService;
 import com.example.backendclonereddit.utils.exceptions.CommentNotFoundException;
 import com.example.backendclonereddit.utils.models.assemblers.CommentModelAssembler;
 import org.springframework.hateoas.CollectionModel;
@@ -13,46 +12,44 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @RestController
+//@CrossOrigin(origins = ApiPaths.CorsOriginLink.LINK)
 @RequestMapping(path = ApiPaths.CommentCtrl.CTRL)
-public class CommentResource {
-    private final CommentRepository commentRepository;
+public class CommentController {
+    private final CommentService commentService;
     private final CommentModelAssembler commentModelAssembler;
 
-    public CommentResource(CommentRepository commentRepository, CommentModelAssembler commentModelAssembler) {
-        this.commentRepository = commentRepository;
+    public CommentController(CommentService commentService, CommentModelAssembler commentModelAssembler) {
+        this.commentService = commentService;
         this.commentModelAssembler = commentModelAssembler;
     }
     /**
      * Get all comments
-     * @return List of comments
+     * @return List of comments and Response ok
      */
    @GetMapping(path = "")
    public ResponseEntity<CollectionModel<CommentModel>> getAllComments() {
-            List<Comment> comments = commentRepository.findAll();
+            List<Comment> comments = commentService.getAllComments();
             return new ResponseEntity<>(
                     commentModelAssembler.toCollectionModel(comments), HttpStatus.OK);
    }
    /**
     * Get comment by id
     * @param id Comment id
-    * @return Comment model wrapped in ResponseEntity
+    * @return Response ok
     * @throws CommentNotFoundException if comment not found
     */
    @GetMapping(path = "/{id}")
    public ResponseEntity<CommentModel> getCommentById(@PathVariable Long id) throws CommentNotFoundException {
-
-       return commentRepository.findById(id)
+       var comment = commentService.getCommentById(id);
+       return  Stream.of(comment)
                 .map(commentModelAssembler::toModel)
                 .map(ResponseEntity::ok)
+                .findFirst()
                 .orElseThrow(() -> new CommentNotFoundException("id-" + id));
    }
 
-   @PutMapping(path = "/{id}")
-    public ResponseEntity<Comment> updateComment(@PathVariable Long id, @RequestBody Comment comment) throws CommentNotFoundException {
-        var commentToUpdate = CheckExistence.checkCommentExists(id, commentRepository).get();
-
-    }
-
+//    TODO: Create adding/deleting/updating comment to post functionality per user
 }
