@@ -18,7 +18,7 @@ import java.util.List;
 public class ReplyModel extends RepresentationModel<ReplyModel> {
     private Long id;
     private String text;
-    private CommentModel comment;
+    private CommentModel parentComment;
     private UserModel author;
     private Long upVotes;
     private Long downVotes;
