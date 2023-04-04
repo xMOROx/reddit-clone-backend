@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @RestController
-//@CrossOrigin(origins = ApiPaths.CorsOriginLink.LINK)
+@CrossOrigin(origins = ApiPaths.CorsOriginLink.LINK)
 @RequestMapping(path = ApiPaths.CommentCtrl.CTRL)
 public class CommentController {
     private final CommentService commentService;

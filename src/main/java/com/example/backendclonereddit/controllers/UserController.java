@@ -22,12 +22,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 @RestController
-//@CrossOrigin(origins = ApiPaths.CorsOriginLink.LINK)
+@CrossOrigin(origins = ApiPaths.CorsOriginLink.LINK)
 @RequestMapping(path = ApiPaths.UserCtrl.CTRL)
 public class UserController {
 

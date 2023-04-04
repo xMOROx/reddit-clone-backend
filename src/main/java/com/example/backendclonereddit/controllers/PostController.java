@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @RestController
-//@CrossOrigin(origins = ApiPaths.CorsOriginLink.LINK)
+@CrossOrigin(origins = ApiPaths.CorsOriginLink.LINK)
 @RequestMapping(path = ApiPaths.PostCtrl.CTRL)
 public class PostController {
     private final PostService postService;
