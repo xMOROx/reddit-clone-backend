@@ -30,7 +30,7 @@ public class CommentModelAssembler extends RepresentationModelAssemblerSupport<C
         commentModel.add(linkTo(methodOn(CommentController.class).getCommentById(entity.getId())).withSelfRel());
 
         commentModel.setId(entity.getId());
-        commentModel.setText(entity.getText());
+        commentModel.setText(entity.getContent());
         commentModel.setCreatedDate(entity.getCreatedDate());
         commentModel.setLastModifiedDate(entity.getLastModifiedDate());
         commentModel.setAuthor(UserModelAssembler.toUserModel(entity.getUser()));
@@ -53,7 +53,7 @@ public class CommentModelAssembler extends RepresentationModelAssemblerSupport<C
     public static CommentModel toCommentModel(Comment comment) {
         return CommentModel.builder()
                 .id(comment.getId())
-                .text(comment.getText())
+                .text(comment.getContent())
                 .build();
     }
 
@@ -65,7 +65,7 @@ public class CommentModelAssembler extends RepresentationModelAssemblerSupport<C
         return comments.stream()
                 .map(comment -> CommentModel.builder()
                         .id(comment.getId())
-                        .text(comment.getText())
+                        .text(comment.getContent())
                         .author(UserModelAssembler.toUserModel(comment.getUser()))
                         .build()
                         .add(linkTo(methodOn(UserController.class).getUserById(comment.getUser().getId())).withSelfRel()))

@@ -6,7 +6,6 @@ import com.example.backendclonereddit.controllers.ReplyController;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 public class ReplyModelAssembler extends RepresentationModelAssemblerSupport<Reply, ReplyModel> {
     public ReplyModelAssembler() {
