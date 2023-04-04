@@ -4,7 +4,6 @@ import com.example.backendclonereddit.entities.Comment;
 import com.example.backendclonereddit.repositories.CommentRepository;
 import com.example.backendclonereddit.utils.exceptions.CommentNotFoundException;
 import com.example.backendclonereddit.utils.exceptions.CommentNotFoundForUserException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +27,10 @@ public class CommentService {
     }
 
     public Comment createNewComment(Comment comment) {
+        if (comment.getLastModifiedDate() == null) {
+            comment.setLastModifiedDate(comment.getCreatedDate());
+        }
+
         commentRepository.save(comment);
         return comment;
     }
@@ -52,7 +55,7 @@ public class CommentService {
         commentToUpdate.setVotes(comment.getVotes());
         commentToUpdate.setCreatedDate(comment.getCreatedDate());
         commentToUpdate.setLastModifiedDate(comment.getLastModifiedDate());
-        commentToUpdate.setText(comment.getText());
+        commentToUpdate.setContent(comment.getContent());
 
         commentRepository.save(commentToUpdate);
 
@@ -62,8 +65,8 @@ public class CommentService {
     public Long partialUpdate(Long id, Comment comment) {
         Comment commentToUpdate = getCommentById(id);
 
-        if (comment.getText() != null) {
-            commentToUpdate.setText(comment.getText());
+        if (comment.getContent() != null) {
+            commentToUpdate.setContent(comment.getContent());
         }
 
         commentRepository.save(commentToUpdate);

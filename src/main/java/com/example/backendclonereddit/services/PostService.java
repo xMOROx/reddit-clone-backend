@@ -25,6 +25,10 @@ public class PostService {
     }
 
     public Post createNewPost(Post post) {
+        if(post.getLastModifiedDate() == null) { // If is null then set it to createdDate
+            post.setLastModifiedDate(post.getCreatedDate());
+        }
+
         postRepository.save(post);
         return post;
     }
