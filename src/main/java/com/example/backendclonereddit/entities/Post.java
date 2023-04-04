@@ -1,12 +1,10 @@
 package com.example.backendclonereddit.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.ToString;
-import net.minidev.json.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,29 +15,31 @@ public class Post {
     @GeneratedValue
     @Column(unique = true)
     private Long id;
-    @ManyToOne()
     @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @NotNull
-    @Size(min = 3, max = 255, message = "Title must be between 3 and 255 characters long")
-    @NotBlank(message = "Title is mandatory")
     @Column(unique = false)
+    @JsonProperty(value = "title", required = true)
+    @NotBlank(message = "Title is mandatory")
+    @Size(min = 3, max = 255, message = "Title must be between 3 and 255 characters long")
     private String title;
 
-    @NotNull
     @Column(unique = false)
+    @NotBlank(message = "Description is mandatory")
+    @JsonProperty(value = "description", required = true)
     @Size(min = 10, max = 4096, message = "Description must be between 10 and 4096 characters long")
-    @NotNull(message = "`description` field is mandatory")
     private String description;
 
-    @NotNull
-    @Past
-    @JsonIgnore
+    @PastOrPresent
+    @Column(unique = false)
+    @JsonProperty(value = "createdDate", required = true)
+    @NotBlank(message = "Created date is mandatory")
     private LocalDateTime createdDate;
-    @NotNull
-    @Past
-    @JsonIgnore
+
+    @Column(unique = false)
+    @PastOrPresent
+    @JsonProperty(value = "lastModifiedDate", required = false)
     private LocalDateTime lastModifiedDate;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore

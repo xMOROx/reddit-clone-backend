@@ -1,6 +1,7 @@
 package com.example.backendclonereddit.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -35,6 +36,7 @@ public class Vote {
     private Reply reply;
     @NotNull
     @Column(unique = false)
+    @JsonProperty(value = "isUpvote", required = true)
     private boolean isUpvote;
 
     public Vote() {

@@ -1,10 +1,10 @@
 package com.example.backendclonereddit.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.ToString;
 
@@ -13,24 +13,27 @@ import java.util.List;
 @Entity(name = "users")
 @ToString(exclude = {"posts", "votes", "comments"})
 public class User {
+
     @Id
     @GeneratedValue
     @Column(unique = true)
     private Long id;
 
-    @NotNull(message = "`username` field is mandatory")
-    @Size(min = 3, max = 255, message = "Username must be between 3 and 255 characters long")
     @Column(unique = true)
+    @NotBlank(message = "`username` field is mandatory")
+    @JsonProperty(value = "username", required = true)
+    @Size(min = 3, max = 255, message = "Username must be between 3 and 255 characters long")
     private String username;
 
+    @Column(unique = false)
     @NotBlank(message = "Password is mandatory")
-    @NotNull(message = "`password` field is mandatory")
+    @JsonProperty(value = "password", required = true)
     @Size(min = 8, max = 255, message = "Password must be between 8 and 255 characters long")
     private String password;
 
     @NotBlank(message = "Email is mandatory")
     @Email(message = "Email should be valid")
-    @NotNull(message = "`email` field is mandatory")
+    @JsonProperty(value = "email", required = true)
     @Column(unique = true)
     private String email;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
@@ -45,17 +48,21 @@ public class User {
     @JsonIgnore
     private List<Comment> comments;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @JsonIgnore
+    private List<Reply> replies;
+
     public User() {
     }
 
-    public User(String username, String password, String email, List<Post> posts, List<Vote> votes, List<Comment> comments) {
+    public User(String username, String password, String email, List<Post> posts, List<Vote> votes, List<Comment> comments, List<Reply> replies) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.posts = posts;
         this.votes = votes;
         this.comments = comments;
-
+        this.replies = replies;
 
     }
 
@@ -112,5 +119,13 @@ public class User {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public List<Reply> getReplies() {
+        return replies;
+    }
+
+    public void setReplies(List<Reply> replies) {
+        this.replies = replies;
     }
 }

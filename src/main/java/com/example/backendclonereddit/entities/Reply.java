@@ -1,10 +1,9 @@
 package com.example.backendclonereddit.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 
 import java.time.LocalDateTime;
@@ -19,7 +18,7 @@ public class Reply  {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    private Comment comment;
+    private Comment parentComment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
@@ -28,30 +27,31 @@ public class Reply  {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "reply", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Vote> votes;
+    @Column(unique = false)
+    @JsonProperty(value = "content", required = true)
+    @NotBlank(message = "Reply for comment is mandatory")
+    @Size(min = 1, max = 4096, message = "Reply for comment must be between 1 and 4096 characters long")
+    private String content;
 
     @Column(unique = false)
-    @NotNull
-    @Size(min = 10, max = 4096, message = "Comment must be between 10 and 4096 characters long")
-    private String text;
-
-    @Column(unique = false)
-    @NotNull
-    @Past
+    @NotBlank(message = "Created date is mandatory")
+    @JsonProperty(value = "createdDate", required = true)
+    @PastOrPresent
     private LocalDateTime createdDate;
 
     @Column(unique = false)
-    @NotNull
-    @Past
+    @JsonProperty(value = "lastModifiedDate", required = false)
+    @PastOrPresent
     private LocalDateTime lastModifiedDate;
     public Reply() {
 
     }
 
-    public Reply(Comment comment, User user, List<Vote> votes, String text, LocalDateTime createdDate, LocalDateTime lastModifiedDate) {
-        this.comment = comment;
+    public Reply(Comment parentComment, User user, List<Vote> votes, String content, LocalDateTime createdDate, LocalDateTime lastModifiedDate) {
+        this.parentComment = parentComment;
         this.user = user;
         this.votes = votes;
-        this.text = text;
+        this.content = content;
         this.createdDate = createdDate;
         this.lastModifiedDate = lastModifiedDate;
     }
@@ -71,12 +71,12 @@ public class Reply  {
         this.votes = votes;
     }
 
-    public String getText() {
-        return text;
+    public String getContent() {
+        return content;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setContent(String text) {
+        this.content = text;
     }
 
     public LocalDateTime getCreatedDate() {
@@ -95,8 +95,6 @@ public class Reply  {
         this.lastModifiedDate = lastModifiedDate;
     }
 
-
-
     public Long getId() {
         return id;
     }
@@ -105,12 +103,12 @@ public class Reply  {
         this.id = id;
     }
 
-    public Comment getComment() {
-        return comment;
+    public Comment getParentComment() {
+        return parentComment;
     }
 
-    public void setComment(Comment comment) {
-        this.comment = comment;
+    public void setParentComment(Comment comment) {
+        this.parentComment = comment;
     }
 
 
