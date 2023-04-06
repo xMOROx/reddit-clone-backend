@@ -48,6 +48,7 @@ public class UserService {
         userToUpdate.setComments(user.getComments());
         userToUpdate.setPosts(user.getPosts());
         userToUpdate.setVotes(user.getVotes());
+        userToUpdate.setReplies(user.getReplies());
 
         userRepository.save(userToUpdate);
 
@@ -77,6 +78,10 @@ public class UserService {
 
         if (user.getVotes() != null) {
             userToUpdate.setVotes(user.getVotes());
+        }
+
+        if (user.getReplies() != null) {
+            userToUpdate.setReplies(user.getReplies());
         }
 
         userRepository.save(userToUpdate);

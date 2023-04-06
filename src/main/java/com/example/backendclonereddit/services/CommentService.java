@@ -69,6 +69,14 @@ public class CommentService {
             commentToUpdate.setContent(comment.getContent());
         }
 
+        if (comment.getCreatedDate() != null) {
+            commentToUpdate.setCreatedDate(comment.getCreatedDate());
+        }
+
+        if (comment.getLastModifiedDate() != null) {
+            commentToUpdate.setLastModifiedDate(comment.getLastModifiedDate());
+        }
+
         commentRepository.save(commentToUpdate);
 
         return commentToUpdate.getId();
