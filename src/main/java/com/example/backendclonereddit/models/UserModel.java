@@ -22,5 +22,7 @@ public class UserModel extends RepresentationModel<UserModel> {
     private List<PostModel> posts;
     private List<VoteModel> votes;
     private List<CommentModel> comments;
+    private List<ReplyModel> replies;
+    private List<SubRedditModel> subreddits;
 
 }

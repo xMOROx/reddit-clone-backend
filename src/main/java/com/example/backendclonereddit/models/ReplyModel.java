@@ -17,7 +17,7 @@ import java.util.List;
 @Relation(collectionRelation = "replies")
 public class ReplyModel extends RepresentationModel<ReplyModel> {
     private Long id;
-    private String text;
+    private String content;
     private CommentModel parentComment;
     private UserModel author;
     private Long upVotes;

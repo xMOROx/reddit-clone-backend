@@ -27,4 +27,6 @@ public class PostModel extends RepresentationModel<PostModel> {
     private Long downVotes;
     private List<CommentModel> comments;
     private List<VoteModel> votes;
+    private List<String> imagesUrl;
+    private SubRedditModel subReddit;
 }

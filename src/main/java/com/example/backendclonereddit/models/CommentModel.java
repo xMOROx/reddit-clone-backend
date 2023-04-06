@@ -16,7 +16,7 @@ import java.util.List;
 @Relation(collectionRelation = "comments")
 public class CommentModel extends RepresentationModel<CommentModel> {
     private Long id;
-    private String text;
+    private String content;
     private PostModel post;
     private UserModel author;
     private Long upVotes;
