@@ -2,8 +2,8 @@ package com.example.backendclonereddit.services;
 
 import com.example.backendclonereddit.entities.Post;
 import com.example.backendclonereddit.repositories.PostRepository;
-import com.example.backendclonereddit.utils.exceptions.PostNotFoundException;
-import com.example.backendclonereddit.utils.exceptions.PostNotFoundForUserException;
+import com.example.backendclonereddit.utils.exceptions.types.PostNotFoundException;
+import com.example.backendclonereddit.utils.exceptions.types.PostNotFoundForUserException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

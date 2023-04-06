@@ -2,7 +2,7 @@ package com.example.backendclonereddit.services;
 
 import com.example.backendclonereddit.entities.User;
 import com.example.backendclonereddit.repositories.UserRepository;
-import com.example.backendclonereddit.utils.exceptions.UserNotFoundException;
+import com.example.backendclonereddit.utils.exceptions.types.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
