@@ -116,14 +116,14 @@ public class UserController {
     }
 
     /**
-     *  Updates or Creates a user with the given id using PUT method
+     *  Updates or Creates a user with the given id using PUT method - full update or create if not exists
      * @param id as a PathVariable
      * @param user as a RequestBody
      * @return Response created with the URI location of the new user or no content if the user was updated
      * @throws UserNotFoundException if the user does not exist
      */
     @PutMapping(path = "/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User user) throws UserNotFoundException {
+    public ResponseEntity<User> updateOrCreateUser(@PathVariable Long id, @Valid @RequestBody User user) throws UserNotFoundException {
         Long updatedId =  userService.fullUpdate(id, user);
 
         if(Objects.equals(updatedId, id)) {
@@ -140,7 +140,7 @@ public class UserController {
     }
 
     /**
-     * Updates a user with the given id using PATCH method
+     * Updates a user with the given id using PATCH method -  Partial update - only the fields that are present in the request body will be updated. Does not override the other fields and does not create a new comment if it does not exist
      * @param id as a PathVariable
      * @param user as a RequestBody
      * @return Response created with the URI location of the new user
@@ -148,7 +148,7 @@ public class UserController {
      */
 
     @PatchMapping(path = "/{id}")
-    public ResponseEntity<User> partialUpdateUser(@PathVariable Long id, @Valid @RequestBody User user) throws UserNotFoundException {
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User user) throws UserNotFoundException {
         Long updatedId =  userService.partialUpdate(id, user);
 
         URI location = ServletUriComponentsBuilder
@@ -179,22 +179,22 @@ public class UserController {
 
     /**
      *  Get user post using user id and post id using GET method
-     * @param userId as a PathVariable
+     * @param id as a PathVariable
      * @param postId as a PathVariable
      * @return Response ok
      * @throws PostNotFoundForUserException if the post does not exist for the user
      * @throws UserNotFoundException if the user does not exist
      */
-    @GetMapping(path = "/{userId}/posts/{postId}")
-    public ResponseEntity<PostModel> getPostById(@PathVariable Long userId, @PathVariable Long postId) throws PostNotFoundForUserException, UserNotFoundException {
-        var user = userService.getUserById(userId);
-        var post = postService.getPostByIdForUserId(postId, userId);
+    @GetMapping(path = "/{id}/posts/{postId}")
+    public ResponseEntity<PostModel> getPostById(@PathVariable Long id, @PathVariable Long postId) throws PostNotFoundForUserException, UserNotFoundException {
+        var user = userService.getUserById(id);
+        var post = postService.getPostByIdForUserId(postId, id);
 
         return Stream.of(post)
                 .map(postModelAssembler::toModel)
                 .map(ResponseEntity::ok)
                 .findFirst()
-                .orElseThrow(() -> new PostNotFoundException("id-" + postId + " for user id-" + userId));
+                .orElseThrow(() -> new PostNotFoundException("id-" + postId + " for user id-" + id));
     }
 
     /**
@@ -248,7 +248,7 @@ public class UserController {
     }
 
     /**
-     *  Update a post by user id and post id using PATCH method - Partial update
+     *  Update a post by user id and post id using PATCH method - Partial update - only the fields that are present in the request body will be updated. Does not override the other fields and does not create a new comment if it does not exist
      * @param id user id
      * @param postId post id
      * @param post post to be updated
@@ -338,6 +338,26 @@ public class UserController {
         var comment = commentService.getCommentByIdAndUserId(commentId, id); // check if comment exists for user
 
         commentService.removeByUserId(commentId, id);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Update a comment by user id and comment id using PATCH method - Partial update - only the fields that are present in the request body will be updated. Does not override the other fields and does not create a new comment if it does not exist
+     * @param id user id
+     * @param commentId comment id
+     * @param comment comment to be updated
+     * @return ResponseEntity with no content
+     * @throws UserNotFoundException if the user does not exist
+     * @throws CommentNotFoundForUserException if the comment does not exist
+     */
+    @PatchMapping(path = "/{id}/comments/{commentId}")
+    public ResponseEntity<Comment> updateCommentForUser(@PathVariable Long id, @PathVariable Long commentId, @Valid @RequestBody Comment comment) throws UserNotFoundException, CommentNotFoundForUserException {
+        var user = userService.getUserById(id);
+
+        comment.setUser(user);
+
+        Long updatedId =  commentService.partialUpdate(commentId, comment);
+
         return ResponseEntity.noContent().build();
     }
 
