@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -140,6 +139,27 @@ public class UserController {
 
     }
 
+    /**
+     * Updates a user with the given id using PATCH method
+     * @param id as a PathVariable
+     * @param user as a RequestBody
+     * @return Response created with the URI location of the new user
+     * @throws UserNotFoundException if the user does not exist
+     */
+
+    @PatchMapping(path = "/{id}")
+    public ResponseEntity<User> partialUpdateUser(@PathVariable Long id, @Valid @RequestBody User user) throws UserNotFoundException {
+        Long updatedId =  userService.partialUpdate(id, user);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(updatedId)
+                .toUri();
+
+        return ResponseEntity.created(location).build();
+
+    }
+
 //    ----------------- USER POSTS -----------------
 
     /**
@@ -201,7 +221,7 @@ public class UserController {
     }
 
     /**
-     * Update a post by user id and post id using PUT method
+     * Update a post by user id and post id using PUT method - Full update or create. I will override the post if it exists
      * @param id  user id
      * @param postId post id
      * @param post post to be updated
@@ -225,6 +245,25 @@ public class UserController {
                 .toUri();
 
         return ResponseEntity.created(location).build();
+    }
+
+    /**
+     *  Update a post by user id and post id using PATCH method - Partial update
+     * @param id user id
+     * @param postId post id
+     * @param post post to be updated
+     * @return ResponseEntity with no content
+     * @throws UserNotFoundException if the user does not exist
+     */
+    @PatchMapping(path = "/{id}/posts/{postId}")
+    public ResponseEntity<Post> partialUpdatePost(@PathVariable Long id, @PathVariable Long postId, @Valid @RequestBody Post post) throws UserNotFoundException {
+        var user = userService.getUserById(id);
+
+        post.setUser(user);
+
+        Long updatedId =  postService.partialUpdate(postId, post);
+
+        return ResponseEntity.noContent().build();
     }
 
     /**

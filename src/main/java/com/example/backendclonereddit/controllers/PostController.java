@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 @RestController
@@ -68,7 +67,7 @@ public class PostController {
 //    ------------------ Comments ------------------
 
     /**
-     * Get all comments
+     * Get all comments for post
      * @param id Post id
      * @return List of comments with Response ok
      * @throws PostNotFoundException if post not found
