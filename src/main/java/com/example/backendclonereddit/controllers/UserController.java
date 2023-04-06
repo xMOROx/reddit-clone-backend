@@ -10,7 +10,7 @@ import com.example.backendclonereddit.models.UserModel;
 import com.example.backendclonereddit.services.CommentService;
 import com.example.backendclonereddit.services.PostService;
 import com.example.backendclonereddit.services.UserService;
-import com.example.backendclonereddit.utils.exceptions.*;
+import com.example.backendclonereddit.utils.exceptions.types.*;
 import com.example.backendclonereddit.utils.models.assemblers.CommentModelAssembler;
 import com.example.backendclonereddit.utils.models.assemblers.PostModelAssembler;
 import com.example.backendclonereddit.utils.models.assemblers.UserModelAssembler;
@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 @RestController
-@CrossOrigin(origins = ApiPaths.CorsOriginLink.LINK)
+@CrossOrigin()
 @RequestMapping(path = ApiPaths.UserCtrl.CTRL)
 public class UserController {
 

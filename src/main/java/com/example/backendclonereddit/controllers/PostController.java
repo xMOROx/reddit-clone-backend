@@ -7,7 +7,7 @@ import com.example.backendclonereddit.models.CommentModel;
 import com.example.backendclonereddit.models.PostModel;
 import com.example.backendclonereddit.services.CommentService;
 import com.example.backendclonereddit.services.PostService;
-import com.example.backendclonereddit.utils.exceptions.PostNotFoundException;
+import com.example.backendclonereddit.utils.exceptions.types.PostNotFoundException;
 import com.example.backendclonereddit.utils.models.assemblers.CommentModelAssembler;
 import com.example.backendclonereddit.utils.models.assemblers.PostModelAssembler;
 import org.springframework.hateoas.CollectionModel;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @RestController
-@CrossOrigin(origins = ApiPaths.CorsOriginLink.LINK)
+@CrossOrigin()
 @RequestMapping(path = ApiPaths.PostCtrl.CTRL)
 public class PostController {
     private final PostService postService;

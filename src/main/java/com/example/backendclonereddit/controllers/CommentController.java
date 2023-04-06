@@ -6,9 +6,9 @@ import com.example.backendclonereddit.models.CommentModel;
 import com.example.backendclonereddit.services.CommentService;
 import com.example.backendclonereddit.services.PostService;
 import com.example.backendclonereddit.services.UserService;
-import com.example.backendclonereddit.utils.exceptions.CommentNotFoundException;
-import com.example.backendclonereddit.utils.exceptions.PostNotFoundException;
-import com.example.backendclonereddit.utils.exceptions.UserNotFoundException;
+import com.example.backendclonereddit.utils.exceptions.types.CommentNotFoundException;
+import com.example.backendclonereddit.utils.exceptions.types.PostNotFoundException;
+import com.example.backendclonereddit.utils.exceptions.types.UserNotFoundException;
 import com.example.backendclonereddit.utils.models.assemblers.CommentModelAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 @RestController
-@CrossOrigin(origins = ApiPaths.CorsOriginLink.LINK)
+@CrossOrigin()
 @RequestMapping(path = ApiPaths.CommentCtrl.CTRL)
 public class CommentController {
     private final CommentService commentService;
