@@ -1,5 +1,6 @@
 package com.example.backendclonereddit.utils.exceptions;
 
+import com.example.backendclonereddit.utils.exceptions.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class CustomizedExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler({UserNotFoundException.class, PostNotFoundException.class, CommentNotFoundException.class, PostNotFoundForUserException.class, CommentNotFoundForUserException.class})
+    @ExceptionHandler({UserNotFoundException.class, PostNotFoundException.class, CommentNotFoundException.class, PostNotFoundForUserException.class, CommentNotFoundForUserException.class, ReplyNotFoundException.class})
     public final ResponseEntity<ErrorDetails> handleNotFoundExceptions(Exception ex, WebRequest request) throws Exception {
         ErrorDetails errorDetails = new ErrorDetails(ex.getMessage(), request.getDescription(false), LocalDateTime.now());
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);

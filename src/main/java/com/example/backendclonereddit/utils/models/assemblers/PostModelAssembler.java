@@ -25,19 +25,9 @@ public class PostModelAssembler extends RepresentationModelAssemblerSupport<Post
 
     @Override
     public @NotNull PostModel toModel(@NotNull Post entity) {
-        PostModel postModel = instantiateModel(entity);
+        PostModel postModel = PostModelAssembler.toPostModel(entity);
 
         postModel.add(linkTo(methodOn(PostController.class).getPostById(entity.getId())).withSelfRel());
-
-        postModel.setId(entity.getId());
-        postModel.setTitle(entity.getTitle());
-        postModel.setDescription(entity.getDescription());
-        postModel.setAuthor(UserModelAssembler.toUserModel(entity.getUser()));
-        postModel.setComments(CommentModelAssembler.toCommentModel(entity.getComments()));
-        postModel.setLastModifiedDate(entity.getLastModifiedDate());
-        postModel.setCreatedDate(entity.getCreatedDate());
-        postModel.setUpVotes(Vote.countUpVotes(entity.getVotes()));
-        postModel.setDownVotes(Vote.countDownVotes(entity.getVotes()));
 
         return postModel;
     }
@@ -49,31 +39,29 @@ public class PostModelAssembler extends RepresentationModelAssemblerSupport<Post
         return postModels;
     }
 
-    public static PostModel toPostModel(Post post) {
+    public static PostModel toPostModel(@NotNull Post post) {
         return PostModel.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .description(post.getDescription())
-                .lastModifiedDate(post.getLastModifiedDate())
                 .createdDate(post.getCreatedDate())
+                .lastModifiedDate(post.getLastModifiedDate())
+                .author(UserModelAssembler.toUserModel(post.getUser()))
+                .comments(CommentModelAssembler.toCommentModel(post.getComments()))
+                .subReddit(SubRedditModelAssembler.toSubRedditModel(post.getSubReddit()))
+                .upVotes(Vote.countUpVotes(post.getVotes()))
+                .downVotes(Vote.countDownVotes(post.getVotes()))
+                .imagesUrl(post.getImagesUrl())
                 .build();
     }
 
-    public static List<PostModel> toPostModel(List<Post> posts) {
+    public static List<PostModel> toPostModel(@NotNull List<Post> posts) {
         if(posts.isEmpty()) {
             return Collections.emptyList();
         }
 
         return posts.stream()
-                .map(post -> PostModel.builder()
-                        .id(post.getId())
-                        .title(post.getTitle())
-                        .description(post.getDescription())
-                        .lastModifiedDate(post.getLastModifiedDate())
-                        .createdDate(post.getCreatedDate())
-                        .author(UserModelAssembler.toUserModel(post.getUser()))
-                        .build()
-                        .add(linkTo(methodOn(UserController.class).getUserById(post.getUser().getId())).withSelfRel()))
+                    .map(PostModelAssembler::toPostModel)
                 .collect(Collectors.toList());
     }
 }

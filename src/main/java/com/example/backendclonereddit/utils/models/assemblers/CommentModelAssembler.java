@@ -4,7 +4,6 @@ import com.example.backendclonereddit.entities.Comment;
 import com.example.backendclonereddit.entities.Vote;
 import com.example.backendclonereddit.models.CommentModel;
 import com.example.backendclonereddit.controllers.CommentController;
-import com.example.backendclonereddit.controllers.UserController;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
@@ -25,20 +24,9 @@ public class CommentModelAssembler extends RepresentationModelAssemblerSupport<C
 
     @Override
     public @NotNull CommentModel toModel(@NotNull Comment entity) {
-        CommentModel commentModel = instantiateModel(entity);
+        CommentModel commentModel = CommentModelAssembler.toCommentModel(entity);
 
         commentModel.add(linkTo(methodOn(CommentController.class).getCommentById(entity.getId())).withSelfRel());
-
-        commentModel.setId(entity.getId());
-        commentModel.setText(entity.getContent());
-        commentModel.setCreatedDate(entity.getCreatedDate());
-        commentModel.setLastModifiedDate(entity.getLastModifiedDate());
-        commentModel.setAuthor(UserModelAssembler.toUserModel(entity.getUser()));
-        commentModel.setPost(PostModelAssembler.toPostModel(entity.getPost()));
-
-        commentModel.setUpVotes(Vote.countUpVotes(entity.getVotes()));
-        commentModel.setDownVotes(Vote.countDownVotes(entity.getVotes()));
-
 
         return commentModel;
     }
@@ -53,7 +41,14 @@ public class CommentModelAssembler extends RepresentationModelAssemblerSupport<C
     public static CommentModel toCommentModel(Comment comment) {
         return CommentModel.builder()
                 .id(comment.getId())
-                .text(comment.getContent())
+                .content(comment.getContent())
+                .post(PostModelAssembler.toPostModel(comment.getPost()))
+                .author(UserModelAssembler.toUserModel(comment.getUser()))
+                .upVotes(Vote.countUpVotes(comment.getVotes()))
+                .downVotes(Vote.countDownVotes(comment.getVotes()))
+                .createdDate(comment.getCreatedDate())
+                .lastModifiedDate(comment.getLastModifiedDate())
+                .replies(ReplyModelAssembler.toReplyModel(comment.getReplies()))
                 .build();
     }
 
@@ -63,12 +58,7 @@ public class CommentModelAssembler extends RepresentationModelAssemblerSupport<C
         }
 
         return comments.stream()
-                .map(comment -> CommentModel.builder()
-                        .id(comment.getId())
-                        .text(comment.getContent())
-                        .author(UserModelAssembler.toUserModel(comment.getUser()))
-                        .build()
-                        .add(linkTo(methodOn(UserController.class).getUserById(comment.getUser().getId())).withSelfRel()))
+                .map(CommentModelAssembler::toCommentModel)
                 .collect(Collectors.toList());
     }
 

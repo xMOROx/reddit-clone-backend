@@ -9,6 +9,10 @@ import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSuppor
 import org.springframework.stereotype.Component;
 
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -20,16 +24,8 @@ public class UserModelAssembler  extends RepresentationModelAssemblerSupport<Use
     }
     @Override
     public @NotNull UserModel toModel(@NotNull User entity) {
-        UserModel userModel = instantiateModel(entity);
-
+        UserModel userModel = UserModelAssembler.toUserModel(entity);
         userModel.add(linkTo(methodOn(UserController.class).getUserById(entity.getId())).withSelfRel());
-        userModel.setId(entity.getId());
-        userModel.setUsername(entity.getUsername());
-        userModel.setEmail(entity.getEmail());
-        userModel.setPassword(entity.getPassword());
-        userModel.setPosts(PostModelAssembler.toPostModel(entity.getPosts()));
-        userModel.setComments(CommentModelAssembler.toCommentModel(entity.getComments()));
-
         return userModel;
     }
 
@@ -40,15 +36,27 @@ public class UserModelAssembler  extends RepresentationModelAssemblerSupport<Use
         return userModels;
     }
 
-    public static UserModel toUserModel(User user) {
+    public static UserModel toUserModel(@NotNull User user) {
         return UserModel.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .password(user.getPassword())
+                .posts(PostModelAssembler.toPostModel(user.getPosts()))
+                .comments(CommentModelAssembler.toCommentModel(user.getComments()))
+                .replies(ReplyModelAssembler.toReplyModel(user.getReplies()))
+                .subreddits(SubRedditModelAssembler.toSubRedditModel(user.getSubreddits()))
                 .build();
     }
 
+    public static List<UserModel> toUserModel(@NotNull List<User> users) {
+        if (users.isEmpty()) {
+            return Collections.emptyList();
+        }
 
+        return users.stream()
+                .map(UserModelAssembler::toUserModel)
+                .collect(Collectors.toList());
+    }
 
 }
