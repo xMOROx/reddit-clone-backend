@@ -111,7 +111,7 @@ public class CommentController {
      * @throws UserNotFoundException if user not found
      */
 
-    @PutMapping(path = "/posts/{postId}/users/{userId}/comments/{commentId}")
+    @PutMapping(path = "{commentId}/posts/{postId}/users/{userId}")
     public ResponseEntity<Comment> updateCommentForPost(@PathVariable Long postId, @PathVariable Long userId, @RequestBody Comment comment, @PathVariable Long commentId) throws UserNotFoundException, PostNotFoundException {
         var user = userService.getUserById(userId);
         var post = postService.getPostById(postId);
@@ -144,7 +144,7 @@ public class CommentController {
      * @throws UserNotFoundException if user not found
      * @throws PostNotFoundException if post not found
      */
-    @PatchMapping(path = "/posts/{postId}/users/{userId}/comments/{commentId}")
+    @PatchMapping(path = "{commentId}/posts/{postId}/users/{userId}")
     public ResponseEntity<Comment> updatePartialCommentForPost(@PathVariable Long postId, @PathVariable Long userId, @RequestBody Comment comment, @PathVariable Long commentId) throws UserNotFoundException, PostNotFoundException {
         var user = userService.getUserById(userId);
         var post = postService.getPostById(postId);
