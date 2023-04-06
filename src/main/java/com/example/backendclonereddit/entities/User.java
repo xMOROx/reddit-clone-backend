@@ -52,10 +52,14 @@ public class User {
     @JsonIgnore
     private List<Reply> replies;
 
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "users")
+    @JsonIgnore
+    private List<SubReddit> subreddits;
+
     public User() {
     }
 
-    public User(String username, String password, String email, List<Post> posts, List<Vote> votes, List<Comment> comments, List<Reply> replies) {
+    public User(String username, String password, String email, List<Post> posts, List<Vote> votes, List<Comment> comments, List<Reply> replies, List<SubReddit> subreddits) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -63,6 +67,7 @@ public class User {
         this.votes = votes;
         this.comments = comments;
         this.replies = replies;
+        this.subreddits = subreddits;
 
     }
 
@@ -127,5 +132,13 @@ public class User {
 
     public void setReplies(List<Reply> replies) {
         this.replies = replies;
+    }
+
+    public List<SubReddit> getSubreddits() {
+        return subreddits;
+    }
+
+    public void setSubreddits(List<SubReddit> subreddits) {
+        this.subreddits = subreddits;
     }
 }

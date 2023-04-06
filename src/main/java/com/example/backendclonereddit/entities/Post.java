@@ -49,19 +49,28 @@ public class Post {
     @JsonIgnore
     private List<Comment> comments;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private SubReddit subReddit;
+
+    @JsonProperty(value = "images", required = false)
+    @ElementCollection
+    List<String> imagesUrl;
 
     public Post() {
     }
 
-    public Post(Long id, User user, String description, String url, List<Vote> votes, List<Comment> comments, LocalDateTime createdDate, LocalDateTime lastModifiedDate) {
+    public Post(Long id, User user, String description, String url, SubReddit subReddit ,List<Vote> votes, List<Comment> comments, List<String> imagesUrl, LocalDateTime createdDate, LocalDateTime lastModifiedDate) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.subReddit = subReddit;
         this.user = user;
         this.votes = votes;
         this.comments = comments;
         this.createdDate = createdDate;
         this.lastModifiedDate = lastModifiedDate;
+        this.imagesUrl = imagesUrl;
     }
 
     public Long getId() {
@@ -126,5 +135,21 @@ public class Post {
 
     public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public SubReddit getSubReddit() {
+        return subReddit;
+    }
+
+    public void setSubReddit(SubReddit subReddit) {
+        this.subReddit = subReddit;
+    }
+
+    public List<String> getImagesUrl() {
+        return imagesUrl;
+    }
+
+    public void setImagesUrl(List<String> imagesUrl) {
+        this.imagesUrl = imagesUrl;
     }
 }
