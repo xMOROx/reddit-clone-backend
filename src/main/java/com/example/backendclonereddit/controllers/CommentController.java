@@ -63,9 +63,26 @@ public class CommentController {
                 .orElseThrow(() -> new CommentNotFoundException("id-" + id));
    }
 
+    /**
+     * Delete comment by id
+     * @param id Comment id
+     * @return Response no content
+     */
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Comment> deleteCommentById(@PathVariable Long id) {
+        commentService.remove(id);
+        return ResponseEntity.noContent().build();
+    }
 
+   /**
+     * Create comment for post by id and user by id
+     * @param postId Post id
+     * @return List of comments and Response ok
+     * @throws PostNotFoundException if post not found
+     * @throws UserNotFoundException if user not found
+     */
     @PostMapping(path = "/posts/{postId}/users/{userId}")
-    public ResponseEntity<CommentModel> createCommentForPost(@PathVariable Long postId, @PathVariable Long userId, @RequestBody Comment comment) throws UserNotFoundException, PostNotFoundException {
+    public ResponseEntity<Comment> createCommentForPost(@PathVariable Long postId, @PathVariable Long userId, @RequestBody Comment comment) throws UserNotFoundException, PostNotFoundException {
         var user = userService.getUserById(userId);
         var post = postService.getPostById(postId);
 
@@ -74,18 +91,25 @@ public class CommentController {
 
         var savedComment = commentService.createNewComment(comment);
 
-        return Stream.of(savedComment)
-                .map(commentModelAssembler::toModel)
-                .map(ResponseEntity::ok)
-                .findFirst()
-                .orElseThrow(() -> new CommentNotFoundException("id-" + comment.getId()));
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedComment.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity<CommentModel> deleteCommentById(@PathVariable Long id) throws CommentNotFoundException {
-        commentService.remove(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+    /**
+     * Update comment for post by id and user by id
+     * @param postId Post id
+     * @param userId  User id
+     * @param comment Comment
+     * @param commentId Comment id
+     * @return List of comments and Response ok
+     * @throws PostNotFoundException if post not found
+     * @throws UserNotFoundException if user not found
+     */
 
     @PutMapping(path = "/posts/{postId}/users/{userId}/comments/{commentId}")
     public ResponseEntity<Comment> updateCommentForPost(@PathVariable Long postId, @PathVariable Long userId, @RequestBody Comment comment, @PathVariable Long commentId) throws UserNotFoundException, PostNotFoundException {
@@ -110,6 +134,16 @@ public class CommentController {
         return ResponseEntity.created(location).build();
     }
 
+    /**
+     * Update comment for post by id and user by id - Partial update
+     * @param postId Post id
+     * @param userId User id
+     * @param comment Comment
+     * @param commentId Comment id
+     * @return Response no content if success
+     * @throws UserNotFoundException if user not found
+     * @throws PostNotFoundException if post not found
+     */
     @PatchMapping(path = "/posts/{postId}/users/{userId}/comments/{commentId}")
     public ResponseEntity<Comment> updatePartialCommentForPost(@PathVariable Long postId, @PathVariable Long userId, @RequestBody Comment comment, @PathVariable Long commentId) throws UserNotFoundException, PostNotFoundException {
         var user = userService.getUserById(userId);
