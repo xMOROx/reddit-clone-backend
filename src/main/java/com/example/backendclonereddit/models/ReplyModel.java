@@ -18,11 +18,10 @@ import java.util.List;
 public class ReplyModel extends RepresentationModel<ReplyModel> {
     private Long id;
     private String content;
-    private CommentModel parentComment;
-    private UserModel author;
+    private Long parentCommentId;
+    private Long authorId;
     private Long upVotes;
     private Long downVotes;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
-    private List<VoteModel> votes;
 }

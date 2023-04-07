@@ -20,9 +20,8 @@ public class UserModel extends RepresentationModel<UserModel> {
     private String email;
     private String password;
     private List<PostModel> posts;
-    private List<VoteModel> votes;
     private List<CommentModel> comments;
     private List<ReplyModel> replies;
     private List<SubRedditModel> subreddits;
-
+    private List<SubRedditModel> ownedSubReddits;
 }

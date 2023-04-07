@@ -23,4 +23,5 @@ public class SubRedditModel extends RepresentationModel<SubRedditModel> {
     private List<PostModel> posts;
     private String bannerUrl;
     private Long numberOfPosts;
+    private Long ownerId;
 }

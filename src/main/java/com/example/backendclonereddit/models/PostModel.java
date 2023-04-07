@@ -1,6 +1,7 @@
 package com.example.backendclonereddit.models;
 
 import com.example.backendclonereddit.entities.User;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
@@ -22,11 +23,10 @@ public class PostModel extends RepresentationModel<PostModel> {
     private String description;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
-    private UserModel author;
+    private Long authorId;
     private Long upVotes;
     private Long downVotes;
     private List<CommentModel> comments;
-    private List<VoteModel> votes;
     private List<String> imagesUrl;
-    private SubRedditModel subReddit;
+    private Long subRedditId;
 }

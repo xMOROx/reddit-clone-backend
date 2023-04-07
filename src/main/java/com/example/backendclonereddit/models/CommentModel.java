@@ -1,5 +1,6 @@
 package com.example.backendclonereddit.models;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
@@ -17,13 +18,12 @@ import java.util.List;
 public class CommentModel extends RepresentationModel<CommentModel> {
     private Long id;
     private String content;
-    private PostModel post;
-    private UserModel author;
+    private Long postId;
+    private Long authorId;
     private Long upVotes;
     private Long downVotes;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
-    private List<VoteModel> votes;
     private List<ReplyModel> replies;
 
 }
