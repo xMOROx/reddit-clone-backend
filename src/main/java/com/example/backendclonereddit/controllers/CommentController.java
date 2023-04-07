@@ -87,7 +87,7 @@ public class CommentController {
         var user = userService.getUserById(userId);
         var post = postService.getPostById(postId);
 
-        comment.setUser(user);
+        comment.setAuthor(user);
         comment.setPost(post);
 
         var savedComment = commentService.createNewComment(comment);
@@ -111,12 +111,12 @@ public class CommentController {
      * @throws UserNotFoundException if user not found
      * @throws PostNotFoundException if post not found
      */
-    @PutMapping(path = "{commentId}")
+    @PutMapping(path = "/{commentId}")
     public ResponseEntity<Comment> updateOrCreateCommentForPostPerUser(@RequestParam Long postId, @RequestParam Long userId, @RequestBody Comment comment, @PathVariable Long commentId) throws UserNotFoundException, PostNotFoundException {
         var user = userService.getUserById(userId);
         var post = postService.getPostById(postId);
 
-        comment.setUser(user);
+        comment.setAuthor(user);
         comment.setPost(post);
 
         var updatedId = commentService.fullUpdate(commentId, comment);
@@ -144,12 +144,12 @@ public class CommentController {
      * @throws UserNotFoundException if user not found
      * @throws PostNotFoundException if post not found
      */
-    @PatchMapping(path = "{commentId}")
+    @PatchMapping(path = "/{commentId}")
     public ResponseEntity<Comment> updateCommentForPostPerUser(@RequestParam Long postId, @RequestParam Long userId, @RequestBody Comment comment, @PathVariable Long commentId) throws UserNotFoundException, PostNotFoundException {
         var user = userService.getUserById(userId);
         var post = postService.getPostById(postId);
 
-        comment.setUser(user);
+        comment.setAuthor(user);
         comment.setPost(post);
 
         var updatedId = commentService.partialUpdate(commentId, comment);

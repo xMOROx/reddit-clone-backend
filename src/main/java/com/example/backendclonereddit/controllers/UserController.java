@@ -3,16 +3,20 @@ package com.example.backendclonereddit.controllers;
 import com.example.backendclonereddit.configs.ApiPaths;
 import com.example.backendclonereddit.entities.Comment;
 import com.example.backendclonereddit.entities.Post;
+import com.example.backendclonereddit.entities.SubReddit;
 import com.example.backendclonereddit.entities.User;
 import com.example.backendclonereddit.models.CommentModel;
 import com.example.backendclonereddit.models.PostModel;
+import com.example.backendclonereddit.models.SubRedditModel;
 import com.example.backendclonereddit.models.UserModel;
 import com.example.backendclonereddit.services.CommentService;
 import com.example.backendclonereddit.services.PostService;
+import com.example.backendclonereddit.services.SubRedditService;
 import com.example.backendclonereddit.services.UserService;
 import com.example.backendclonereddit.utils.exceptions.types.*;
 import com.example.backendclonereddit.utils.models.assemblers.CommentModelAssembler;
 import com.example.backendclonereddit.utils.models.assemblers.PostModelAssembler;
+import com.example.backendclonereddit.utils.models.assemblers.SubRedditModelAssembler;
 import com.example.backendclonereddit.utils.models.assemblers.UserModelAssembler;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
@@ -34,25 +38,32 @@ public class UserController {
     private final PostService postService;
     private final CommentService commentService;
     private final UserService userService;
+    private final SubRedditService subRedditService;
 
     private final UserModelAssembler userModelAssembler;
     private final PostModelAssembler postModelAssembler;
     private final CommentModelAssembler commentModelAssembler;
-
+    private final SubRedditModelAssembler subRedditModelAssembler;
 
     public UserController(UserService userService
             , PostService postService
             , CommentService commentService
+            , SubRedditService subRedditService
             , UserModelAssembler userModelAssembler
             , PostModelAssembler postModelAssembler
-            , CommentModelAssembler commentModelAssembler) {
+            , CommentModelAssembler commentModelAssembler
+            , SubRedditModelAssembler subRedditModelAssembler
+    ) {
 
         this.userService = userService;
         this.postService = postService;
         this.commentService = commentService;
+        this.subRedditService = subRedditService;
+
         this.userModelAssembler = userModelAssembler;
         this.postModelAssembler = postModelAssembler;
         this.commentModelAssembler = commentModelAssembler;
+        this.subRedditModelAssembler = subRedditModelAssembler;
     }
 
 //    ----------------- GET ALL USERS -----------------
@@ -171,6 +182,10 @@ public class UserController {
     @GetMapping(path = "/{id}/posts")
     public ResponseEntity<CollectionModel<PostModel>> getAllPostsByUserId(@PathVariable Long id) throws UserNotFoundException {
         List<Post> posts = postService.getPostsByUserId(id);
+        System.out.println("-----------------------------------------------------------");
+        System.out.println("Posts: ");
+        System.out.println(posts);
+        System.out.println("-----------------------------------------------------------");
 
         return new ResponseEntity<>(
                 postModelAssembler.toCollectionModel(posts),
@@ -208,7 +223,7 @@ public class UserController {
     public ResponseEntity<Post> createPost(@PathVariable Long id, @Valid @RequestBody Post post) throws UserNotFoundException {
         var user = userService.getUserById(id);
 
-        post.setUser(user);
+        post.setAuthor(user);
 
         Post savedPost =  postService.createNewPost(post);
 
@@ -232,7 +247,7 @@ public class UserController {
     public ResponseEntity<Post> updatePost(@PathVariable Long id, @PathVariable Long postId, @Valid @RequestBody Post post) throws UserNotFoundException {
         var user = userService.getUserById(id);
 
-        post.setUser(user);
+        post.setAuthor(user);
 
         Long updatedId =  postService.fullUpdate(postId, post);
 
@@ -259,7 +274,7 @@ public class UserController {
     public ResponseEntity<Post> partialUpdatePost(@PathVariable Long id, @PathVariable Long postId, @Valid @RequestBody Post post) throws UserNotFoundException {
         var user = userService.getUserById(id);
 
-        post.setUser(user);
+        post.setAuthor(user);
 
         Long updatedId =  postService.partialUpdate(postId, post);
 
@@ -354,11 +369,53 @@ public class UserController {
     public ResponseEntity<Comment> updateCommentForUser(@PathVariable Long id, @PathVariable Long commentId, @Valid @RequestBody Comment comment) throws UserNotFoundException, CommentNotFoundForUserException {
         var user = userService.getUserById(id);
 
-        comment.setUser(user);
+        comment.setAuthor(user);
 
         Long updatedId =  commentService.partialUpdate(commentId, comment);
 
         return ResponseEntity.noContent().build();
+    }
+//    ---------------------- SubReddit --------------------------------
+
+    /**
+     *  Get all subreddits by user id using GET method
+     * @param id user id
+     * @return CollectionModel of SubRedditModel wrapped in ResponseEntity
+     * @throws UserNotFoundException if the user does not exist
+     */
+
+    @GetMapping(path = "/{id}/subreddits")
+    public ResponseEntity<CollectionModel<SubRedditModel>> getAllSubRedditsByUserId(@PathVariable Long id) throws UserNotFoundException {
+        var user = userService.getUserById(id);
+
+        List<SubReddit> subReddits = subRedditService.getAllSubReddits();
+
+        return new ResponseEntity<>(
+                subRedditModelAssembler.toCollectionModel(subReddits),
+                HttpStatus.OK);
+    }
+
+    /**
+     * Create a new subreddit by user id using POST method
+     * @param id user id
+     * @param subReddit  subreddit to be created
+     * @return ResponseEntity with created status
+     * @throws UserNotFoundException if the user does not exist
+     */
+    @PostMapping(path = "/{id}/subreddits")
+    public ResponseEntity<SubReddit> createSubReddit(@PathVariable Long id, @Valid @RequestBody SubReddit subReddit) throws UserNotFoundException {
+        var user = userService.getUserById(id);
+
+        subReddit.setOwner(user);
+
+        SubReddit savedSubReddit =  subRedditService.createNewSubReddit(subReddit);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(savedSubReddit.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
 
