@@ -55,7 +55,7 @@ public class UserService {
         return userToUpdate.getId();
     }
 
-    public Long partialUpdate(Long id, User user) {
+    public Long partialUpdate(Long id, User user) throws UserNotFoundException {
         User userToUpdate = getUserById(id);
 
         if (user.getUsername() != null) {

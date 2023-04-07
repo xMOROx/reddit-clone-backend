@@ -4,6 +4,7 @@ import com.example.backendclonereddit.entities.Post;
 import com.example.backendclonereddit.repositories.PostRepository;
 import com.example.backendclonereddit.utils.exceptions.types.PostNotFoundException;
 import com.example.backendclonereddit.utils.exceptions.types.PostNotFoundForUserException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class PostService {
     }
 
     public void removeByUserId(Long id, Long userId)  {
-        postRepository.deleteByIdAndUserId(id, userId);
+        postRepository.deleteByIdAndAuthorId(id, userId);
     }
 
     public Long fullUpdate(Long postId, Post post) {
@@ -53,18 +54,20 @@ public class PostService {
         postToUpdate.setId(postId);
         postToUpdate.setTitle(post.getTitle());
         postToUpdate.setDescription(post.getDescription());
-        postToUpdate.setUser(post.getUser());
+        postToUpdate.setAuthor(post.getAuthor());
         postToUpdate.setComments(post.getComments());
         postToUpdate.setVotes(post.getVotes());
         postToUpdate.setCreatedDate(post.getCreatedDate());
         postToUpdate.setLastModifiedDate(post.getLastModifiedDate());
+        postToUpdate.setImagesUrl(post.getImagesUrl());
+        postToUpdate.setSubReddit(post.getSubReddit());
 
         postRepository.save(postToUpdate);
 
         return postToUpdate.getId();
     }
 
-    public Long partialUpdate(Long postId, Post post) {
+    public Long partialUpdate(Long postId, @NotNull Post post) throws PostNotFoundException {
         Post postToUpdate = getPostById(postId);
 
         if (post.getTitle() != null) {
@@ -73,20 +76,14 @@ public class PostService {
         if (post.getDescription() != null) {
             postToUpdate.setDescription(post.getDescription());
         }
-        if (post.getUser() != null) {
-            postToUpdate.setUser(post.getUser());
-        }
-        if (post.getComments() != null) {
-            postToUpdate.setComments(post.getComments());
-        }
-        if (post.getVotes() != null) {
-            postToUpdate.setVotes(post.getVotes());
-        }
         if (post.getCreatedDate() != null) {
             postToUpdate.setCreatedDate(post.getCreatedDate());
         }
         if (post.getLastModifiedDate() != null) {
             postToUpdate.setLastModifiedDate(post.getLastModifiedDate());
+        }
+        if(post.getImagesUrl() != null) {
+            postToUpdate.setImagesUrl(post.getImagesUrl());
         }
 
         postRepository.save(postToUpdate);
@@ -95,9 +92,9 @@ public class PostService {
     }
 
     public List<Post> getPostsByUserId(Long userId) {
-        return postRepository.findAllByUserId(userId);
+        return postRepository.findAllByAuthorId(userId);
     }
     public Post getPostByIdForUserId(Long id, Long userId) throws PostNotFoundForUserException {
-        return postRepository.findPostByIdAndUserId(id, userId).orElseThrow(() -> new PostNotFoundForUserException("id-" + id));
+        return postRepository.findPostByIdAndAuthorId(id, userId).orElseThrow(() -> new PostNotFoundForUserException("id-" + id));
     }
 }

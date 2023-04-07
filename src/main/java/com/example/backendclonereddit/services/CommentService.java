@@ -50,7 +50,7 @@ public class CommentService {
 
         commentToUpdate.setId(id);
         commentToUpdate.setPost(comment.getPost());
-        commentToUpdate.setUser(comment.getUser());
+        commentToUpdate.setAuthor(comment.getAuthor());
         commentToUpdate.setReplies(comment.getReplies());
         commentToUpdate.setVotes(comment.getVotes());
         commentToUpdate.setCreatedDate(comment.getCreatedDate());
@@ -62,7 +62,7 @@ public class CommentService {
         return commentToUpdate.getId();
     }
 
-    public Long partialUpdate(Long id, Comment comment) {
+    public Long partialUpdate(Long id, Comment comment) throws CommentNotFoundException {
         Comment commentToUpdate = getCommentById(id);
 
         if (comment.getContent() != null) {
@@ -87,15 +87,15 @@ public class CommentService {
     }
 
     public List<Comment> getCommentsByUserId(Long id) {
-        return commentRepository.findAllByUserId(id);
+        return commentRepository.findAllByAuthorId(id);
     }
 
     public Comment getCommentByIdAndUserId(Long id, Long userId) throws CommentNotFoundForUserException {
-        return commentRepository.findByIdAndUserId(id, userId).orElseThrow(() -> new CommentNotFoundForUserException("id-" + id));
+        return commentRepository.findByIdAndAuthorId(id, userId).orElseThrow(() -> new CommentNotFoundForUserException("id-" + id));
     }
 
     public void removeByUserId(Long id, Long userId) {
-        commentRepository.deleteByIdAndUserId(id, userId);
+        commentRepository.deleteByIdAndAuthorId(id, userId);
     }
 
     public Comment getCommentsByPostIdAndCommentId(Long postId, Long commentId) {

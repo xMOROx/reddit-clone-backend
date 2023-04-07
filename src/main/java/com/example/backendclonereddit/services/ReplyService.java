@@ -1,6 +1,5 @@
 package com.example.backendclonereddit.services;
 
-import com.example.backendclonereddit.entities.Post;
 import com.example.backendclonereddit.entities.Reply;
 import com.example.backendclonereddit.repositories.ReplyRepository;
 import com.example.backendclonereddit.utils.exceptions.types.ReplyNotFoundException;
@@ -50,7 +49,7 @@ public class ReplyService {
 
         replyToUpdate.setId(replyId);
         replyToUpdate.setContent(reply.getContent());
-        replyToUpdate.setUser(reply.getUser());
+        replyToUpdate.setAuthor(reply.getAuthor());
         replyToUpdate.setVotes(reply.getVotes());
         replyToUpdate.setCreatedDate(reply.getCreatedDate());
         replyToUpdate.setLastModifiedDate(reply.getLastModifiedDate());
@@ -60,7 +59,7 @@ public class ReplyService {
         return replyId;
     }
 
-    public Long partialUpdate(Long postId, Reply reply) {
+    public Long partialUpdate(Long postId, Reply reply) throws ReplyNotFoundException {
         Reply replyToUpdate = getReplyById(postId);
 
         if(reply.getParentComment() != null) {
@@ -69,14 +68,6 @@ public class ReplyService {
 
         if(reply.getContent() != null) {
             replyToUpdate.setContent(reply.getContent());
-        }
-
-        if(reply.getUser() != null) {
-            replyToUpdate.setUser(reply.getUser());
-        }
-
-        if(reply.getVotes() != null) {
-            replyToUpdate.setVotes(reply.getVotes());
         }
 
         if(reply.getCreatedDate() != null) {
