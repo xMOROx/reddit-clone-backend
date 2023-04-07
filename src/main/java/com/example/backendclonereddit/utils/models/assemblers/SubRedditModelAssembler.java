@@ -1,6 +1,7 @@
 package com.example.backendclonereddit.utils.models.assemblers;
 
 import com.example.backendclonereddit.controllers.SubRedditController;
+import com.example.backendclonereddit.controllers.UserController;
 import com.example.backendclonereddit.entities.Reply;
 import com.example.backendclonereddit.entities.SubReddit;
 import com.example.backendclonereddit.models.SubRedditModel;
@@ -24,16 +25,18 @@ public class SubRedditModelAssembler extends RepresentationModelAssemblerSupport
     }
 
     @Override
-    public @NotNull SubRedditModel toModel(@NotNull SubReddit entity) {
+    public @NotNull SubRedditModel toModel(SubReddit entity) {
         SubRedditModel subRedditModel = SubRedditModelAssembler.toSubRedditModel(entity);
 
         subRedditModel.add(linkTo(methodOn(SubRedditController.class).getSubRedditById(entity.getId())).withSelfRel());
+        subRedditModel.add(linkTo(methodOn(SubRedditController.class).getAllSubReddits()).withRel("subreddits"));
+        subRedditModel.add(linkTo(methodOn(UserController.class).getUserById(entity.getOwner().getId())).withRel("owner"));
 
         return subRedditModel;
     }
 
     @Override
-    public @NotNull CollectionModel<SubRedditModel> toCollectionModel(@NotNull Iterable<? extends SubReddit> entities) {
+    public @NotNull CollectionModel<SubRedditModel> toCollectionModel(Iterable<? extends SubReddit> entities) {
         CollectionModel<SubRedditModel> subRedditModels = super.toCollectionModel(entities);
 
         subRedditModels.add(linkTo(methodOn(SubRedditController.class).getAllSubReddits()).withSelfRel());
@@ -41,7 +44,11 @@ public class SubRedditModelAssembler extends RepresentationModelAssemblerSupport
         return subRedditModels;
     }
 
-    public static SubRedditModel toSubRedditModel(@NotNull SubReddit subReddit) {
+    public static SubRedditModel toSubRedditModel(SubReddit subReddit) {
+        if (subReddit == null) {
+            return null;
+        }
+
         return SubRedditModel.builder()
                 .id(subReddit.getId())
                 .name(subReddit.getName())
@@ -50,10 +57,11 @@ public class SubRedditModelAssembler extends RepresentationModelAssemblerSupport
                 .users(UserModelAssembler.toUserModel(subReddit.getUsers()))
                 .bannerUrl(subReddit.getBannerUrl())
                 .posts(PostModelAssembler.toPostModel(subReddit.getPosts()))
+                .ownerId(subReddit.getOwner().getId())
                 .build();
     }
 
-    public static List<SubRedditModel> toSubRedditModel(@NotNull List<SubReddit> subreddits) {
+    public static List<SubRedditModel> toSubRedditModel(List<SubReddit> subreddits) {
         if (subreddits.isEmpty()) {
             return Collections.emptyList();
         }

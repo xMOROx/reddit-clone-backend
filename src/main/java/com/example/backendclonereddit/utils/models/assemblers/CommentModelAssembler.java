@@ -1,5 +1,6 @@
 package com.example.backendclonereddit.utils.models.assemblers;
 
+import com.example.backendclonereddit.controllers.UserController;
 import com.example.backendclonereddit.entities.Comment;
 import com.example.backendclonereddit.entities.Vote;
 import com.example.backendclonereddit.models.CommentModel;
@@ -27,6 +28,8 @@ public class CommentModelAssembler extends RepresentationModelAssemblerSupport<C
         CommentModel commentModel = CommentModelAssembler.toCommentModel(entity);
 
         commentModel.add(linkTo(methodOn(CommentController.class).getCommentById(entity.getId())).withSelfRel());
+        commentModel.add(linkTo(methodOn(CommentController.class).getAllComments()).withRel("comments"));
+        commentModel.add(linkTo(methodOn(UserController.class).getUserById(entity.getAuthor().getId())).withRel("author"));
 
         return commentModel;
     }
@@ -42,8 +45,8 @@ public class CommentModelAssembler extends RepresentationModelAssemblerSupport<C
         return CommentModel.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
-                .post(PostModelAssembler.toPostModel(comment.getPost()))
-                .author(UserModelAssembler.toUserModel(comment.getUser()))
+                .postId(comment.getPost().getId())
+                .authorId(comment.getAuthor().getId())
                 .upVotes(Vote.countUpVotes(comment.getVotes()))
                 .downVotes(Vote.countDownVotes(comment.getVotes()))
                 .createdDate(comment.getCreatedDate())
@@ -52,7 +55,7 @@ public class CommentModelAssembler extends RepresentationModelAssemblerSupport<C
                 .build();
     }
 
-    public static List<CommentModel> toCommentModel(@NotNull List<Comment> comments) {
+    public static List<CommentModel> toCommentModel(List<Comment> comments) {
         if(comments.isEmpty()) {
             return Collections.emptyList();
         }

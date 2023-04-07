@@ -1,7 +1,9 @@
 package com.example.backendclonereddit.utils.exceptions;
 
 import com.example.backendclonereddit.utils.exceptions.types.*;
+import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -12,8 +14,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.lang.StringBuilder;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @ControllerAdvice
 public class CustomizedExceptionHandler extends ResponseEntityExceptionHandler {
@@ -24,10 +30,21 @@ public class CustomizedExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler({UserNotFoundException.class, PostNotFoundException.class, CommentNotFoundException.class, PostNotFoundForUserException.class, CommentNotFoundForUserException.class, ReplyNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, PostNotFoundException.class, CommentNotFoundException.class, PostNotFoundForUserException.class, CommentNotFoundForUserException.class, ReplyNotFoundException.class, SubRedditNotFoundException.class})
     public final ResponseEntity<ErrorDetails> handleNotFoundExceptions(Exception ex, WebRequest request) throws Exception {
         ErrorDetails errorDetails = new ErrorDetails(ex.getMessage(), request.getDescription(false), LocalDateTime.now());
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public final ResponseEntity<ErrorDetails> handleDataIntegrityViolation(Exception ex, WebRequest request) throws Exception {
+        StringBuilder message = new StringBuilder();
+        message.append("Data integrity violation: ");
+
+//        TODO: implement this
+
+        ErrorDetails errorDetails = new ErrorDetails(message.toString(), request.getDescription(false), LocalDateTime.now());
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
     @Override

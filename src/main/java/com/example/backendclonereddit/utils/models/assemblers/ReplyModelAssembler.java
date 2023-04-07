@@ -1,8 +1,8 @@
 package com.example.backendclonereddit.utils.models.assemblers;
 
+import com.example.backendclonereddit.controllers.UserController;
 import com.example.backendclonereddit.entities.Reply;
 import com.example.backendclonereddit.entities.Vote;
-import com.example.backendclonereddit.models.PostModel;
 import com.example.backendclonereddit.models.ReplyModel;
 import com.example.backendclonereddit.controllers.ReplyController;
 import org.jetbrains.annotations.NotNull;
@@ -25,18 +25,11 @@ public class ReplyModelAssembler extends RepresentationModelAssemblerSupport<Rep
 
     @Override
     public @NotNull ReplyModel toModel(@NotNull Reply entity) {
-        ReplyModel replyModel = instantiateModel(entity);
+        ReplyModel replyModel = ReplyModelAssembler.toReplyModel(entity);
 
         replyModel.add(linkTo(methodOn(ReplyController.class).getReplyById(entity.getId())).withSelfRel());
-
-        replyModel.setId(entity.getId());
-        replyModel.setContent(entity.getContent());
-        replyModel.setCreatedDate(entity.getCreatedDate());
-        replyModel.setLastModifiedDate(entity.getLastModifiedDate());
-        replyModel.setAuthor(UserModelAssembler.toUserModel(entity.getUser()));
-        replyModel.setParentComment(CommentModelAssembler.toCommentModel(entity.getParentComment()));
-        replyModel.setUpVotes(Vote.countUpVotes(entity.getVotes()));
-        replyModel.setDownVotes(Vote.countDownVotes(entity.getVotes()));
+        replyModel.add(linkTo(methodOn(ReplyController.class).getAllReplies()).withRel("replies"));
+        replyModel.add(linkTo(methodOn(UserController.class).getUserById(entity.getAuthor().getId())).withRel("author"));
 
         return replyModel;
     }
@@ -48,12 +41,12 @@ public class ReplyModelAssembler extends RepresentationModelAssemblerSupport<Rep
         return replyModels;
     }
 
-    public static ReplyModel toReplyModel(@NotNull Reply reply) {
+    public static ReplyModel toReplyModel(Reply reply) {
         return ReplyModel.builder()
                 .id(reply.getId())
                 .content(reply.getContent())
-                .parentComment(CommentModelAssembler.toCommentModel(reply.getParentComment()))
-                .author(UserModelAssembler.toUserModel(reply.getUser()))
+                .parentCommentId(reply.getParentComment().getId())
+                .authorId(reply.getAuthor().getId())
                 .upVotes(Vote.countUpVotes(reply.getVotes()))
                 .downVotes(Vote.countDownVotes(reply.getVotes()))
                 .createdDate(reply.getCreatedDate())
@@ -61,7 +54,7 @@ public class ReplyModelAssembler extends RepresentationModelAssemblerSupport<Rep
                 .build();
     }
 
-    public static List<ReplyModel> toReplyModel(@NotNull List<Reply> replies) {
+    public static List<ReplyModel> toReplyModel(List<Reply> replies) {
         if(replies.isEmpty()) {
             return Collections.emptyList();
         }

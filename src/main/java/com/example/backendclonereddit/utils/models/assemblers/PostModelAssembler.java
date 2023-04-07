@@ -24,38 +24,43 @@ public class PostModelAssembler extends RepresentationModelAssemblerSupport<Post
     }
 
     @Override
-    public @NotNull PostModel toModel(@NotNull Post entity) {
+    public @NotNull PostModel toModel(Post entity) {
         PostModel postModel = PostModelAssembler.toPostModel(entity);
 
         postModel.add(linkTo(methodOn(PostController.class).getPostById(entity.getId())).withSelfRel());
+        postModel.add(linkTo(methodOn(PostController.class).getAllPosts()).withRel("posts"));
+        postModel.add(linkTo(methodOn(UserController.class).getUserById(entity.getAuthor().getId())).withRel("author"));
 
         return postModel;
     }
 
     @Override
-    public @NotNull CollectionModel<PostModel> toCollectionModel(@NotNull Iterable<? extends Post> entities) {
+    public @NotNull CollectionModel<PostModel> toCollectionModel(Iterable<? extends Post> entities) {
         CollectionModel<PostModel> postModels = super.toCollectionModel(entities);
         postModels.add(linkTo(methodOn(PostController.class).getAllPosts()).withSelfRel());
         return postModels;
     }
 
-    public static PostModel toPostModel(@NotNull Post post) {
+    public static PostModel toPostModel(Post post) {
+        Long subRedditId = post.getSubReddit() != null ? post.getSubReddit().getId() : null;
+
+
         return PostModel.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .description(post.getDescription())
                 .createdDate(post.getCreatedDate())
                 .lastModifiedDate(post.getLastModifiedDate())
-                .author(UserModelAssembler.toUserModel(post.getUser()))
                 .comments(CommentModelAssembler.toCommentModel(post.getComments()))
-                .subReddit(SubRedditModelAssembler.toSubRedditModel(post.getSubReddit()))
+                .subRedditId(subRedditId)
+                .authorId(post.getAuthor().getId())
                 .upVotes(Vote.countUpVotes(post.getVotes()))
                 .downVotes(Vote.countDownVotes(post.getVotes()))
                 .imagesUrl(post.getImagesUrl())
                 .build();
     }
 
-    public static List<PostModel> toPostModel(@NotNull List<Post> posts) {
+    public static List<PostModel> toPostModel(List<Post> posts) {
         if(posts.isEmpty()) {
             return Collections.emptyList();
         }

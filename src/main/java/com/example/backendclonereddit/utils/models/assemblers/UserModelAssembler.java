@@ -25,7 +25,10 @@ public class UserModelAssembler  extends RepresentationModelAssemblerSupport<Use
     @Override
     public @NotNull UserModel toModel(@NotNull User entity) {
         UserModel userModel = UserModelAssembler.toUserModel(entity);
+
         userModel.add(linkTo(methodOn(UserController.class).getUserById(entity.getId())).withSelfRel());
+        userModel.add(linkTo(methodOn(UserController.class).getAllUsers()).withRel("users"));
+
         return userModel;
     }
 
@@ -36,7 +39,10 @@ public class UserModelAssembler  extends RepresentationModelAssemblerSupport<Use
         return userModels;
     }
 
-    public static UserModel toUserModel(@NotNull User user) {
+    public static UserModel toUserModel(User user) {
+        if (user == null) {
+            return null;
+        }
         return UserModel.builder()
                 .id(user.getId())
                 .username(user.getUsername())
@@ -46,10 +52,11 @@ public class UserModelAssembler  extends RepresentationModelAssemblerSupport<Use
                 .comments(CommentModelAssembler.toCommentModel(user.getComments()))
                 .replies(ReplyModelAssembler.toReplyModel(user.getReplies()))
                 .subreddits(SubRedditModelAssembler.toSubRedditModel(user.getSubreddits()))
+                .ownedSubReddits(SubRedditModelAssembler.toSubRedditModel(user.getOwnedSubreddits()))
                 .build();
     }
 
-    public static List<UserModel> toUserModel(@NotNull List<User> users) {
+    public static List<UserModel> toUserModel(List<User> users) {
         if (users.isEmpty()) {
             return Collections.emptyList();
         }
