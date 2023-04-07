@@ -4,6 +4,7 @@ import com.example.backendclonereddit.configs.ApiPaths;
 import com.example.backendclonereddit.entities.SubReddit;
 import com.example.backendclonereddit.models.SubRedditModel;
 import com.example.backendclonereddit.services.SubRedditService;
+import com.example.backendclonereddit.utils.exceptions.types.SubRedditNotFoundException;
 import com.example.backendclonereddit.utils.models.assemblers.SubRedditModelAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,10 @@ public class SubRedditController {
         this.subRedditModelAssembler = subRedditModelAssembler;
     }
 
+    /**
+     * Get all subreddits
+     * @return List of subreddits and Response ok
+     */
     @GetMapping("")
     public ResponseEntity<CollectionModel<SubRedditModel>> getAllSubReddits() {
         List< SubReddit> subReddits = subRedditService.getAllSubReddits();
@@ -34,8 +39,14 @@ public class SubRedditController {
         );
     }
 
+    /**
+     * Get subreddit by id
+     * @param id Subreddit id
+     * @return Response ok
+     * @throws SubRedditNotFoundException if subreddit not found
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<SubRedditModel> getSubRedditById(@PathVariable Long id) {
+    public ResponseEntity<SubRedditModel> getSubRedditById(@PathVariable Long id) throws SubRedditNotFoundException {
         SubReddit subReddit = subRedditService.getSubRedditById(id);
         return new ResponseEntity<>(
                 subRedditModelAssembler.toModel(subReddit),
@@ -43,11 +54,14 @@ public class SubRedditController {
         );
     }
 
+    /**
+     * Delete subreddit by id
+     * @param id Subreddit id
+     * @return Response no content
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<SubRedditModel> deleteSubRedditById(@PathVariable Long id) {
         subRedditService.remove(id);
         return ResponseEntity.noContent().build();
     }
-
-
 }

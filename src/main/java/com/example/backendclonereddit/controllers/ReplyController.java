@@ -39,6 +39,11 @@ public class ReplyController {
         this.commentService = commentService;
         this.replyModelAssembler = replyModelAssembler;
     }
+
+    /**
+     * Get all replies
+     * @return List of replies and Response ok
+     */
     @GetMapping("")
     public ResponseEntity<CollectionModel<ReplyModel>> getAllReplies() {
         List<Reply> replies = replyService.getAllReplies();
@@ -46,6 +51,13 @@ public class ReplyController {
                 replyModelAssembler.toCollectionModel(replies),
                 HttpStatus.OK);
     }
+
+    /**
+     * Get reply by id
+     * @param id Reply id
+     * @return Response ok
+     * @throws ReplyNotFoundException if reply not found
+     */
     @GetMapping("/{id}")
     public ResponseEntity<ReplyModel> getReplyById(@PathVariable Long id) throws ReplyNotFoundException {
         return Stream.of(replyService.getReplyById(id))
@@ -55,7 +67,15 @@ public class ReplyController {
                 .orElseThrow(() -> new ReplyNotFoundException("Reply not found with id: " + id));
     }
 
-
+    /**
+     * Create new reply
+     * @param reply Reply object
+     * @param userId User id
+     * @param commentId Comment id
+     * @return Response created
+     * @throws CommentNotFoundException if comment not found
+     * @throws UserNotFoundException if user not found
+     */
     @PostMapping("")
     public ResponseEntity<Reply> createReply(@RequestBody @NotNull Reply reply, @RequestParam Long userId, @RequestParam Long commentId) throws CommentNotFoundException, UserNotFoundException {
         var user = userService.getUserById(userId);
@@ -74,8 +94,18 @@ public class ReplyController {
         return ResponseEntity.created(location).build();
     }
 
+    /**
+     * Update or create reply by id - full update. If reply not found, create new reply.
+     * @param id Reply id
+     * @param reply Reply object
+     * @param commentId Comment id
+     * @param userId User id
+     * @return Response created
+     * @throws CommentNotFoundException if comment not found
+     * @throws UserNotFoundException if user not found
+     */
     @PutMapping("/{id}")
-    public ResponseEntity<Reply> updateReply(@PathVariable Long id, @RequestBody @NotNull Reply reply, @RequestParam Long commentId, @RequestParam Long userId) throws ReplyNotFoundException, CommentNotFoundException, UserNotFoundException {
+    public ResponseEntity<Reply> updateReply(@PathVariable Long id, @RequestBody @NotNull Reply reply, @RequestParam Long commentId, @RequestParam Long userId) throws CommentNotFoundException, UserNotFoundException {
         var user = userService.getUserById(userId);
         var comment = commentService.getCommentById(commentId);
 
@@ -95,7 +125,17 @@ public class ReplyController {
         return ResponseEntity.created(location).build();
     }
 
-
+    /**
+     * Update a reply by id - partial update. If reply not found, throw ReplyNotFoundException.
+     * @param id Reply id
+     * @param reply Reply object
+     * @param commentId Comment id
+     * @param userId User id
+     * @return Response created
+     * @throws ReplyNotFoundException if reply not found
+     * @throws CommentNotFoundException if comment not found
+     * @throws UserNotFoundException if user not found
+     */
     @PatchMapping("/{id}")
     public ResponseEntity<Reply> patchReply(@PathVariable Long id, @RequestBody @NotNull Reply reply, @RequestParam Long commentId, @RequestParam Long userId) throws ReplyNotFoundException, CommentNotFoundException, UserNotFoundException {
         var user = userService.getUserById(userId);
@@ -108,8 +148,13 @@ public class ReplyController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Delete reply by id
+     * @param id Reply id
+     * @return Response no content
+     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Reply> deleteReply(@PathVariable Long id) throws ReplyNotFoundException {
+    public ResponseEntity<Reply> deleteReply(@PathVariable Long id) {
         replyService.remove(id);
         return ResponseEntity.noContent().build();
     }

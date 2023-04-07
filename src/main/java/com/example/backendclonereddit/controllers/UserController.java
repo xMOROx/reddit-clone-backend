@@ -236,7 +236,7 @@ public class UserController {
     }
 
     /**
-     * Update a post by user id and post id using PUT method - Full update or create. I will override the post if it exists
+     * Update a post by user id and post id using PUT method - Full update or create. It will override the post if it exists
      * @param id  user id
      * @param postId post id
      * @param post post to be updated
@@ -418,5 +418,68 @@ public class UserController {
         return ResponseEntity.created(location).build();
     }
 
+    /**
+     * Create or update a subreddit by user id using PUT method - Full update - all fields must be present in the request body. If the subreddit does not exist, it will be created. If it exists, it will be updated
+     * @param id user id
+     * @param subRedditId subreddit id
+     * @param subReddit subreddit to be created or updated
+     * @return ResponseEntity with created status
+     * @throws UserNotFoundException if the user does not exist
+     * @throws SubRedditNotFoundException if the subreddit does not exist
+     */
+    @PutMapping(path = "/{id}/subreddits/{subRedditId}")
+    public ResponseEntity<SubReddit> updateSubReddit(@PathVariable Long id, @PathVariable Long subRedditId, @Valid @RequestBody SubReddit subReddit) throws UserNotFoundException, SubRedditNotFoundException {
+        var user = userService.getUserById(id);
+
+        subReddit.setOwner(user);
+
+        Long updatedId =  subRedditService.fullUpdate(subRedditId, subReddit);
+        if (Objects.equals(updatedId, subRedditId)) {
+            return ResponseEntity.noContent().build();
+        }
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand(updatedId)
+                .toUri();
+
+        return ResponseEntity.created(location).build();
+    }
+
+    /**
+     * Update a subreddit by user id and subreddit id using PATCH method - Partial update - only the fields that are present in the request body will be updated. Does not override the other fields and does not create a new subreddit if it does not exist
+     * @param id user id
+     * @param subRedditId subreddit id
+     * @param subReddit subreddit to be updated
+     * @return ResponseEntity with no content
+     * @throws UserNotFoundException if the user does not exist
+     * @throws SubRedditNotFoundException if the subreddit does not exist
+     */
+    @PatchMapping(path = "/{id}/subreddits/{subRedditId}")
+    public ResponseEntity<SubReddit> partialUpdateSubReddit(@PathVariable Long id, @PathVariable Long subRedditId, @Valid @RequestBody SubReddit subReddit) throws UserNotFoundException, SubRedditNotFoundException {
+        var user = userService.getUserById(id);
+
+        subReddit.setOwner(user);
+
+        Long updatedId =  subRedditService.partialUpdate(subRedditId, subReddit);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Delete a subreddit by user id and subreddit id using DELETE method
+     * @param id user id
+     * @param subRedditId subreddit id
+     * @return ResponseEntity with no content
+     * @throws UserNotFoundException if the user does not exist
+     * @throws SubRedditNotFoundException if the subreddit does not exist
+     */
+    @DeleteMapping(path = "/{id}/subreddits/{subRedditId}")
+    public ResponseEntity<SubReddit> deleteSubReddit(@PathVariable Long id, @PathVariable Long subRedditId) throws UserNotFoundException, SubRedditNotFoundException {
+        var user = userService.getUserById(id); // check if user exists
+        var subReddit = subRedditService.getSubRedditById(subRedditId); // check if subReddit exists
+
+        subRedditService.remove(subRedditId);
+        return ResponseEntity.noContent().build();
+    }
 
 }
