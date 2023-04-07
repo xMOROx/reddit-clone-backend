@@ -19,28 +19,28 @@ public class PostRepositoryImpl {
 
     }
     @SuppressWarnings("unsued")
-    public List<Post> findAllByUserId(Long userId) {
-        String query = "SELECT p FROM Posts p WHERE p.user.id = :userId";
+    public List<Post> findAllByAuthorId(Long authorId) {
+        String query = "SELECT p FROM Posts p WHERE p.author.id = :userId";
         TypedQuery<Post> typedQuery = entityManager.createQuery(query, Post.class);
-        typedQuery.setParameter("userId", userId);
+        typedQuery.setParameter("userId", authorId);
         return typedQuery.getResultList();
     }
 
     @SuppressWarnings("unsued")
-    Optional<Post> findPostByIdForUserId(Long id, Long userId) {
-        String query = "SELECT p FROM Posts p WHERE p.id = :id AND p.user.id = :userId";
+    Optional<Post> findPostByIdAndAuthorId(Long id, Long authorId) {
+        String query = "SELECT p FROM Posts p WHERE p.id = :id AND p.author.id = :userId";
         TypedQuery<Post> typedQuery = entityManager.createQuery(query, Post.class);
         typedQuery.setParameter("id", id);
-        typedQuery.setParameter("userId", userId);
+        typedQuery.setParameter("userId", authorId);
         return Optional.ofNullable(typedQuery.getSingleResult());
     }
 
     @SuppressWarnings("unsued")
-    void deleteByIdAndUserId(Long id, Long userId) {
-        String query = "DELETE FROM Posts p WHERE p.id = :id AND p.user.id = :userId";
+    void deleteByIdAndAuthorId(Long id, Long authorId) {
+        String query = "DELETE FROM Posts p WHERE p.id = :id AND p.author.id = :userId";
         TypedQuery<Post> typedQuery = entityManager.createQuery(query, Post.class);
         typedQuery.setParameter("id", id);
-        typedQuery.setParameter("userId", userId);
+        typedQuery.setParameter("userId", authorId);
         typedQuery.executeUpdate();
 
     }

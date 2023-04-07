@@ -22,10 +22,10 @@ public class CommentRepositoryImpl {
 //        this.commentRepository = commentRepository;
     }
     @SuppressWarnings("unsued")
-    public List<Comment> findAllByUserId(Long userId) {
-        String query = "SELECT c FROM Comments c WHERE c.user.id = :userId";
+    public List<Comment> findAllByAuthorId(Long authorId) {
+        String query = "SELECT c FROM Comments c WHERE c.author.id = :userId";
         TypedQuery<Comment> typedQuery = entityManager.createQuery(query, Comment.class);
-        typedQuery.setParameter("userId", userId);
+        typedQuery.setParameter("userId", authorId);
         return typedQuery.getResultList();
     }
 
@@ -38,21 +38,21 @@ public class CommentRepositoryImpl {
     }
 
     @SuppressWarnings("unsued")
-    Optional<Comment> findByIdAndUserId(Long id, Long userId)
+    Optional<Comment> findByIdAndAuthorId(Long id, Long authorId)
     {
-        String query = "SELECT c FROM Comments c WHERE c.id = :id AND c.user.id = :userId";
+        String query = "SELECT c FROM Comments c WHERE c.id = :id AND c.author.id = :userId";
         TypedQuery<Comment> typedQuery = entityManager.createQuery(query, Comment.class);
         typedQuery.setParameter("id", id);
-        typedQuery.setParameter("userId", userId);
+        typedQuery.setParameter("userId", authorId);
         return Optional.ofNullable(typedQuery.getSingleResult());
     }
 
     @SuppressWarnings("unsued")
-    void deleteByIdAndUserId(Long id, Long userId) {
-        String query = "DELETE FROM Comments c WHERE c.id = :id AND c.user.id = :userId";
+    void deleteByIdAndAuthorId(Long id, Long authorId) {
+        String query = "DELETE FROM Comments c WHERE c.id = :id AND c.author.id = :userId";
         TypedQuery<Comment> typedQuery = entityManager.createQuery(query, Comment.class);
         typedQuery.setParameter("id", id);
-        typedQuery.setParameter("userId", userId);
+        typedQuery.setParameter("userId", authorId);
         typedQuery.executeUpdate();
 
     }
