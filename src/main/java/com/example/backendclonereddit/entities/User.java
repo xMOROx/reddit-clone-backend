@@ -36,7 +36,7 @@ public class User {
     @JsonProperty(value = "email", required = true)
     @Column(unique = true)
     private String email;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
     @JsonIgnore
     private List<Post> posts;
 
@@ -44,11 +44,11 @@ public class User {
     @JsonIgnore
     private List<Vote> votes;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
     @JsonIgnore
     private List<Comment> comments;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
     @JsonIgnore
     private List<Reply> replies;
 
@@ -56,10 +56,15 @@ public class User {
     @JsonIgnore
     private List<SubReddit> subreddits;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "owner")
+    @JsonIgnore
+    private List<SubReddit> ownedSubreddits;
+
     public User() {
     }
 
-    public User(String username, String password, String email, List<Post> posts, List<Vote> votes, List<Comment> comments, List<Reply> replies, List<SubReddit> subreddits) {
+    public User(Long id, String username, String password, String email, List<Post> posts, List<Vote> votes, List<Comment> comments, List<Reply> replies, List<SubReddit> subreddits, List<SubReddit> ownedSubreddits) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
@@ -68,7 +73,7 @@ public class User {
         this.comments = comments;
         this.replies = replies;
         this.subreddits = subreddits;
-
+        this.ownedSubreddits = ownedSubreddits;
     }
 
     public String getUsername() {
@@ -141,4 +146,13 @@ public class User {
     public void setSubreddits(List<SubReddit> subreddits) {
         this.subreddits = subreddits;
     }
+
+    public List<SubReddit> getOwnedSubreddits() {
+        return ownedSubreddits;
+    }
+
+    public void setOwnedSubreddits(List<SubReddit> ownedSubreddits) {
+        this.ownedSubreddits = ownedSubreddits;
+    }
+
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
@@ -27,7 +28,7 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    private User user;
+    private User author;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -41,7 +42,7 @@ public class Comment {
     private String content;
 
     @Column(unique = false)
-    @NotBlank(message = "Created date is mandatory")
+    @NotNull(message = "Created date is mandatory")
     @JsonProperty(value = "createdDate", required = true)
     @PastOrPresent
     private LocalDateTime createdDate;
@@ -55,7 +56,7 @@ public class Comment {
         this.id = id;
         this.post = post;
         this.replies = replies;
-        this.user = user;
+        this.author = user;
         this.votes = votes;
         this.content = content;
         this.createdDate = createdDate;
@@ -90,12 +91,12 @@ public class Comment {
         this.replies = replies;
     }
 
-    public User getUser() {
-        return user;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAuthor(User user) {
+        this.author = user;
     }
 
     public List<Vote> getVotes() {

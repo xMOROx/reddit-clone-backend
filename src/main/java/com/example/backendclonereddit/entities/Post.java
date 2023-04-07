@@ -17,7 +17,7 @@ public class Post {
     private Long id;
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    private User author;
 
     @Column(unique = false)
     @JsonProperty(value = "title", required = true)
@@ -34,7 +34,7 @@ public class Post {
     @PastOrPresent
     @Column(unique = false)
     @JsonProperty(value = "createdDate", required = true)
-    @NotBlank(message = "Created date is mandatory")
+    @NotNull(message = "Created date is mandatory")
     private LocalDateTime createdDate;
 
     @Column(unique = false)
@@ -65,7 +65,7 @@ public class Post {
         this.title = title;
         this.description = description;
         this.subReddit = subReddit;
-        this.user = user;
+        this.author = user;
         this.votes = votes;
         this.comments = comments;
         this.createdDate = createdDate;
@@ -97,12 +97,12 @@ public class Post {
         this.description = description;
     }
 
-    public User getUser() {
-        return user;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAuthor(User user) {
+        this.author = user;
     }
 
     public List<Vote> getVotes() {

@@ -22,7 +22,7 @@ public class Reply  {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    private User user;
+    private User author;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "reply", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -34,7 +34,7 @@ public class Reply  {
     private String content;
 
     @Column(unique = false)
-    @NotBlank(message = "Created date is mandatory")
+    @NotNull(message = "Created date is mandatory")
     @JsonProperty(value = "createdDate", required = true)
     @PastOrPresent
     private LocalDateTime createdDate;
@@ -49,18 +49,18 @@ public class Reply  {
 
     public Reply(Comment parentComment, User user, List<Vote> votes, String content, LocalDateTime createdDate, LocalDateTime lastModifiedDate) {
         this.parentComment = parentComment;
-        this.user = user;
+        this.author = user;
         this.votes = votes;
         this.content = content;
         this.createdDate = createdDate;
         this.lastModifiedDate = lastModifiedDate;
     }
-    public User getUser() {
-        return user;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAuthor(User user) {
+        this.author = user;
     }
 
     public List<Vote> getVotes() {

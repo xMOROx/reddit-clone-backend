@@ -1,5 +1,6 @@
 package com.example.backendclonereddit.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -27,27 +28,31 @@ public class SubReddit {
     @JoinTable(name = "user_subreddit",
             joinColumns = @JoinColumn(name = "subreddit_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @JsonProperty(value = "users", required = true)
+    @JsonIgnore
     private List<User> users;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "subReddit")
-    @JsonProperty(value = "posts", required = true)
+    @JsonIgnore
     private List<Post> posts;
 
     @JsonProperty(value = "bannerUrl", required = false)
     @Column(nullable = true, unique = false)
     private String bannerUrl;
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User owner;
 
     public SubReddit() {
     }
 
-    public SubReddit(Long id, String name, String description, List<User> users, List<Post> posts, String bannerUrl) {
+    public SubReddit(Long id, String name, String description, List<User> users, List<Post> posts, String bannerUrl, User owner) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.users = users;
         this.posts = posts;
         this.bannerUrl = bannerUrl;
+        this.owner = owner;
     }
 
     public Long getId() {
@@ -96,5 +101,13 @@ public class SubReddit {
 
     public void setBannerUrl(String bannerUrl) {
         this.bannerUrl = bannerUrl;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 }
