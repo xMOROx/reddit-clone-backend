@@ -1,4 +1,4 @@
-package com.example.backendclonereddit.entities;
+package com.zajdel.backend.clone.reddit.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
