@@ -1,15 +1,20 @@
-package com.example.backendclonereddit.controllers;
+package com.zajdel.backend.clone.reddit.controllers;
 
-import com.example.backendclonereddit.configs.ApiPaths;
-import com.example.backendclonereddit.entities.SubReddit;
-import com.example.backendclonereddit.models.SubRedditModel;
-import com.example.backendclonereddit.services.SubRedditService;
-import com.example.backendclonereddit.utils.exceptions.types.SubRedditNotFoundException;
-import com.example.backendclonereddit.utils.models.assemblers.SubRedditModelAssembler;
+import com.zajdel.backend.clone.reddit.configs.ApiPaths;
+import com.zajdel.backend.clone.reddit.entities.SubReddit;
+import com.zajdel.backend.clone.reddit.models.SubRedditModel;
+import com.zajdel.backend.clone.reddit.services.SubRedditService;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.SubRedditNotFoundException;
+import com.zajdel.backend.clone.reddit.utils.models.assemblers.SubRedditModelAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 

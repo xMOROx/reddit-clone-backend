@@ -1,19 +1,23 @@
-package com.example.backendclonereddit.controllers;
+package com.zajdel.backend.clone.reddit.controllers;
 
-import com.example.backendclonereddit.configs.ApiPaths;
-import com.example.backendclonereddit.entities.Comment;
-import com.example.backendclonereddit.entities.Post;
-import com.example.backendclonereddit.models.CommentModel;
-import com.example.backendclonereddit.models.PostModel;
-import com.example.backendclonereddit.services.CommentService;
-import com.example.backendclonereddit.services.PostService;
-import com.example.backendclonereddit.utils.exceptions.types.PostNotFoundException;
-import com.example.backendclonereddit.utils.models.assemblers.CommentModelAssembler;
-import com.example.backendclonereddit.utils.models.assemblers.PostModelAssembler;
+import com.zajdel.backend.clone.reddit.configs.ApiPaths;
+import com.zajdel.backend.clone.reddit.entities.Comment;
+import com.zajdel.backend.clone.reddit.entities.Post;
+import com.zajdel.backend.clone.reddit.models.CommentModel;
+import com.zajdel.backend.clone.reddit.models.PostModel;
+import com.zajdel.backend.clone.reddit.services.CommentService;
+import com.zajdel.backend.clone.reddit.services.PostService;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.PostNotFoundException;
+import com.zajdel.backend.clone.reddit.utils.models.assemblers.CommentModelAssembler;
+import com.zajdel.backend.clone.reddit.utils.models.assemblers.PostModelAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.stream.Stream;
