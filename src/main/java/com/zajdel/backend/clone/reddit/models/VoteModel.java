@@ -1,4 +1,4 @@
-package com.example.backendclonereddit.models;
+package com.zajdel.backend.clone.reddit.models;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.AllArgsConstructor;
