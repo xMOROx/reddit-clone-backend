@@ -1,4 +1,4 @@
-package com.example.backendclonereddit.configs;
+package com.zajdel.backend.clone.reddit.configs;
 
 public final class ApiPaths {
     private static final String BASE_PATH = "/api/v1";

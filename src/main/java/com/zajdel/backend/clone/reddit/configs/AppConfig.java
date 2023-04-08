@@ -1,4 +1,4 @@
-package com.example.backendclonereddit.configs;
+package com.zajdel.backend.clone.reddit.configs;
 
 public class AppConfig {
 }

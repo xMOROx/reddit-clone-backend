@@ -1,4 +1,4 @@
-package com.example.backendclonereddit.configs;
+package com.zajdel.backend.clone.reddit.configs;
 //
 //import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 //import org.springframework.context.annotation.Bean;
