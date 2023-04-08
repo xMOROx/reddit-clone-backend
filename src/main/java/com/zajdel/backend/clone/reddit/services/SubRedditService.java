@@ -1,8 +1,8 @@
-package com.example.backendclonereddit.services;
+package com.zajdel.backend.clone.reddit.services;
 
-import com.example.backendclonereddit.entities.SubReddit;
-import com.example.backendclonereddit.repositories.SubRedditRepository;
-import com.example.backendclonereddit.utils.exceptions.types.SubRedditNotFoundException;
+import com.zajdel.backend.clone.reddit.entities.SubReddit;
+import com.zajdel.backend.clone.reddit.repositories.SubRedditRepository;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.SubRedditNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 

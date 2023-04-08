@@ -1,8 +1,8 @@
-package com.example.backendclonereddit.services;
+package com.zajdel.backend.clone.reddit.services;
 
-import com.example.backendclonereddit.entities.Reply;
-import com.example.backendclonereddit.repositories.ReplyRepository;
-import com.example.backendclonereddit.utils.exceptions.types.ReplyNotFoundException;
+import com.zajdel.backend.clone.reddit.entities.Reply;
+import com.zajdel.backend.clone.reddit.repositories.ReplyRepository;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.ReplyNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 

@@ -1,8 +1,8 @@
-package com.example.backendclonereddit.services;
+package com.zajdel.backend.clone.reddit.services;
 
-import com.example.backendclonereddit.entities.User;
-import com.example.backendclonereddit.repositories.UserRepository;
-import com.example.backendclonereddit.utils.exceptions.types.UserNotFoundException;
+import com.zajdel.backend.clone.reddit.entities.User;
+import com.zajdel.backend.clone.reddit.repositories.UserRepository;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

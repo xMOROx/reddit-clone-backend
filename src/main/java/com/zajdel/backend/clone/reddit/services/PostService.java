@@ -1,9 +1,9 @@
-package com.example.backendclonereddit.services;
+package com.zajdel.backend.clone.reddit.services;
 
-import com.example.backendclonereddit.entities.Post;
-import com.example.backendclonereddit.repositories.PostRepository;
-import com.example.backendclonereddit.utils.exceptions.types.PostNotFoundException;
-import com.example.backendclonereddit.utils.exceptions.types.PostNotFoundForUserException;
+import com.zajdel.backend.clone.reddit.entities.Post;
+import com.zajdel.backend.clone.reddit.repositories.PostRepository;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.PostNotFoundException;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.PostNotFoundForUserException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 

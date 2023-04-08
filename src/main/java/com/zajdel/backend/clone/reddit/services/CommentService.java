@@ -1,9 +1,9 @@
-package com.example.backendclonereddit.services;
+package com.zajdel.backend.clone.reddit.services;
 
-import com.example.backendclonereddit.entities.Comment;
-import com.example.backendclonereddit.repositories.CommentRepository;
-import com.example.backendclonereddit.utils.exceptions.types.CommentNotFoundException;
-import com.example.backendclonereddit.utils.exceptions.types.CommentNotFoundForUserException;
+import com.zajdel.backend.clone.reddit.entities.Comment;
+import com.zajdel.backend.clone.reddit.repositories.CommentRepository;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.CommentNotFoundException;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.CommentNotFoundForUserException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
