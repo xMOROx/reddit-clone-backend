@@ -1,6 +1,6 @@
-package com.example.backendclonereddit.repositories.impl;
+package com.zajdel.backend.clone.reddit.repositories.impl;
 
-import com.example.backendclonereddit.entities.Comment;
+import com.zajdel.backend.clone.reddit.entities.Comment;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;

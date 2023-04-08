@@ -1,6 +1,6 @@
-package com.example.backendclonereddit.repositories;
+package com.zajdel.backend.clone.reddit.repositories;
 
-import com.example.backendclonereddit.entities.Comment;
+import com.zajdel.backend.clone.reddit.entities.Comment;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
