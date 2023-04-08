@@ -1,13 +1,14 @@
-package com.example.backendclonereddit.utils.models.assemblers;
+package com.zajdel.backend.clone.reddit.utils.models.assemblers;
 
-import com.example.backendclonereddit.controllers.ReplyController;
-import com.example.backendclonereddit.controllers.UserController;
-import com.example.backendclonereddit.entities.Reply;
-import com.example.backendclonereddit.entities.Vote;
-import com.example.backendclonereddit.models.ReplyModel;
+import com.zajdel.backend.clone.reddit.controllers.ReplyController;
+import com.zajdel.backend.clone.reddit.controllers.UserController;
+import com.zajdel.backend.clone.reddit.entities.Reply;
+import com.zajdel.backend.clone.reddit.entities.Vote;
+import com.zajdel.backend.clone.reddit.models.ReplyModel;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -52,7 +53,7 @@ public class ReplyModelAssembler extends RepresentationModelAssemblerSupport<Rep
 
         replyModel.add(linkTo(methodOn(ReplyController.class).getReplyById(entity.getId())).withSelfRel());
         replyModel.add(linkTo(methodOn(ReplyController.class).getAllReplies()).withRel("replies"));
-        replyModel.add(linkTo(methodOn(UserController.class).getUserById(entity.getAuthor().getId())).withRel("author"));
+        replyModel.add(WebMvcLinkBuilder.linkTo(methodOn(UserController.class).getUserById(entity.getAuthor().getId())).withRel("author"));
 
         return replyModel;
     }

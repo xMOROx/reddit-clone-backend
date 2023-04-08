@@ -1,10 +1,10 @@
-package com.example.backendclonereddit.utils.models.assemblers;
+package com.zajdel.backend.clone.reddit.utils.models.assemblers;
 
-import com.example.backendclonereddit.controllers.PostController;
-import com.example.backendclonereddit.controllers.UserController;
-import com.example.backendclonereddit.entities.Post;
-import com.example.backendclonereddit.entities.Vote;
-import com.example.backendclonereddit.models.PostModel;
+import com.zajdel.backend.clone.reddit.controllers.PostController;
+import com.zajdel.backend.clone.reddit.controllers.UserController;
+import com.zajdel.backend.clone.reddit.entities.Post;
+import com.zajdel.backend.clone.reddit.entities.Vote;
+import com.zajdel.backend.clone.reddit.models.PostModel;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;

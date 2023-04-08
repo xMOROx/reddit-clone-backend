@@ -1,4 +1,4 @@
-package com.example.backendclonereddit.utils.exceptions.types;
+package com.zajdel.backend.clone.reddit.utils.exceptions.types;
 
 public class CommentNotFoundForPostException extends RuntimeException
 {

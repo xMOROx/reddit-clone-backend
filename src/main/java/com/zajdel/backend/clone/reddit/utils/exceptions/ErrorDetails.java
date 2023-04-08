@@ -1,4 +1,4 @@
-package com.example.backendclonereddit.utils.exceptions;
+package com.zajdel.backend.clone.reddit.utils.exceptions;
 
 import java.time.LocalDateTime;
 

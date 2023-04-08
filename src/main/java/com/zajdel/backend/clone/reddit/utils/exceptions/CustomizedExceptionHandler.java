@@ -1,6 +1,13 @@
-package com.example.backendclonereddit.utils.exceptions;
+package com.zajdel.backend.clone.reddit.utils.exceptions;
 
-import com.example.backendclonereddit.utils.exceptions.types.*;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.CommentNotFoundException;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.CommentNotFoundForPostException;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.CommentNotFoundForUserException;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.PostNotFoundException;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.PostNotFoundForUserException;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.ReplyNotFoundException;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.SubRedditNotFoundException;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.UserNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
@@ -33,14 +40,14 @@ public class CustomizedExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(
             {UserNotFoundException.class,
-            PostNotFoundException.class,
-            CommentNotFoundException.class,
-            PostNotFoundForUserException.class,
-            CommentNotFoundForUserException.class,
-            CommentNotFoundForPostException.class,
-            ReplyNotFoundException.class,
-            SubRedditNotFoundException.class}
-                    )
+                    PostNotFoundException.class,
+                    CommentNotFoundException.class,
+                    PostNotFoundForUserException.class,
+                    CommentNotFoundForUserException.class,
+                    CommentNotFoundForPostException.class,
+                    ReplyNotFoundException.class,
+                    SubRedditNotFoundException.class}
+    )
     public final ResponseEntity<ErrorDetails> handleNotFoundExceptions(Exception ex, WebRequest request) throws Exception {
         ErrorDetails errorDetails = new ErrorDetails(
                 ex.getMessage(),
