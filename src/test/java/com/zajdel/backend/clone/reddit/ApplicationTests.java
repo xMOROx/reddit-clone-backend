@@ -1,4 +1,4 @@
-package com.example.backendclonereddit;
+package com.zajdel.backend.clone.reddit;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
