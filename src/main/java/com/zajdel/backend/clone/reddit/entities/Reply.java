@@ -12,7 +12,7 @@ import lombok.ToString;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity(name = "replies")
+@Entity(name = "Replies")
 @ToString(exclude = {"author", "votes"})
 public class Reply {
     @Id

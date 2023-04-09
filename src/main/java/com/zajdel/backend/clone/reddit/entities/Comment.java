@@ -52,7 +52,12 @@ public class Comment {
     @PastOrPresent
     private LocalDateTime lastModifiedDate;
 
-    public Comment(Post post, List<Reply> replies, User author, List<Vote> votes, String content, LocalDateTime createdDate, LocalDateTime lastModifiedDate) {
+    public Comment(Post post, User author,
+                   List<Reply> replies,
+                   List<Vote> votes,
+                   String content,
+                   LocalDateTime createdDate, LocalDateTime lastModifiedDate) {
+
         this.post = post;
         this.replies = replies;
         this.author = author;

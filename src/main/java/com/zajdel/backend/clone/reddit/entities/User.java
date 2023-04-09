@@ -10,7 +10,7 @@ import lombok.ToString;
 
 import java.util.List;
 
-@Entity(name = "users")
+@Entity(name = "Users")
 @ToString(exclude = {"posts", "votes", "comments"})
 public class User {
 

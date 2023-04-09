@@ -15,11 +15,13 @@ public class SubReddit {
     @Id
     @GeneratedValue
     private Long id;
+
     @Column(nullable = false, unique = true)
     @Size(min = 3, max = 255, message = "Name must be between 3 and 255 characters long")
     @NotBlank(message = "Name is mandatory")
     @JsonProperty(value = "name", required = true)
     private String name;
+
     @Column(nullable = false, unique = false)
     @Size(min = 10, max = 4096, message = "Description must be between 10 and 4096 characters long")
     @NotBlank(message = "Description is mandatory")
