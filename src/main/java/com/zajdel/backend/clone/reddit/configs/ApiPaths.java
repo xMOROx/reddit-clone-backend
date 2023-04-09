@@ -22,9 +22,6 @@ public final class ApiPaths {
         public static final String CTRL = BASE_PATH + "/users";
     }
 
-    public static final class SubredditCtrl {
-        public static final String CTRL = BASE_PATH + "/subreddits";
-    }
     public static final class ReplyCtrl {
         public static final String CTRL = BASE_PATH + "/replies";
     }
