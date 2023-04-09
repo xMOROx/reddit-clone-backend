@@ -17,10 +17,7 @@ public class CommentRepositoryImpl {
     @PersistenceContext
     private EntityManager entityManager;
 
-//    private CommentRepository commentRepository;
-
     public CommentRepositoryImpl() {
-//        this.commentRepository = commentRepository;
     }
 
     @SuppressWarnings("unsued")
