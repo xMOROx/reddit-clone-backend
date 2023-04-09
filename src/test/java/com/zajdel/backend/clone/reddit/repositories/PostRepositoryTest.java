@@ -110,46 +110,90 @@ class PostRepositoryTest {
     }
 
     @Test
-    void itShouldFindAllPostsByAuthorId() {
+    public void itShouldFindAllPostsByAuthorId() {
         // given
         Long authorId = author1.getId();
-        Long authorId2 = author2.getId();
-        Long authorId3 = 100L;
         int expectedSize = 3;
 
         // when
         List<Post> expected = underTest.findAllPostsByAuthorId(authorId);
-        List<Post> expected2 = underTest.findAllPostsByAuthorId(authorId2);
-        List<Post> expected3 = underTest.findAllPostsByAuthorId(authorId3);
 
         // then
         assertThat(expected.size()).isEqualTo(expectedSize);
-        assertThat(expected2.size()).isZero();
-        assertThat(expected3.size()).isZero();
     }
 
     @Test
-    public void findPostByIdAndAuthorId() {
+    public void itShouldReturnEmptyListOfPostsWhenAuthorDoesNotHavePosts() {
+
+        // given
+        Long authorId = author2.getId();
+
+        // when
+        List<Post> expected = underTest.findAllPostsByAuthorId(authorId);
+
+        // then
+        assertThat(expected.size()).isZero();
+    }
+
+    @Test
+    public void itShouldReturnEmptyListOfPostsWhenAuthorDoesNotExists() {
+
+        // given
+        Long authorId = 100L;
+        int expectedSize = 0;
+
+        // when
+        List<Post> expected = underTest.findAllPostsByAuthorId(authorId);
+
+        // then
+        assertThat(expected.size()).isEqualTo(expectedSize);
+    }
+
+
+    @Test
+    public void ItShouldFindPostByIdAndAuthorId() {
         // given
         Long authorId = author1.getId();
-        Long authorId2 = author2.getId();
-        Long authorId3 = 100L;
         Long postId = post.getId();
 
         // when
         Optional<Post> expected = underTest.findPostByIdAndAuthorId(postId, authorId);
-        Optional<Post> expected2 = underTest.findPostByIdAndAuthorId(postId, authorId2);
-        Optional<Post> expected3 = underTest.findPostByIdAndAuthorId(postId, authorId3);
 
         // then
         assertThat(expected.isPresent()).isTrue();
-        assertThat(expected2.isPresent()).isFalse();
-        assertThat(expected3.isPresent()).isFalse();
+        assertThat(expected.get()).isEqualTo(post);
 
     }
 
     @Test
-    public void deletePostByIdAndAuthorId() {
+    public void ItShouldNotFindPostByIdAndAuthorIdWhenPostIsNotCreatedByThatUser() {
+        //given
+        Long authorId = author2.getId();
+        Long postId = post.getId();
+
+        //when
+        Optional<Post> expected = underTest.findPostByIdAndAuthorId(postId, authorId);
+
+        //then
+        assertThat(expected.isPresent()).isFalse();
+    }
+
+    @Test
+    public void ItShouldNotFindPostByIdAndAuthorIdWhenAuthorDoesNotExists() {
+        //given
+        Long authorId = 100L;
+        Long postId = post.getId();
+
+        //when
+        Optional<Post> expected = underTest.findPostByIdAndAuthorId(postId, authorId);
+
+        //then
+        assertThat(expected.isPresent()).isFalse();
+
+    }
+
+    @Test
+    public void ItShouldDeletePostByIdAndAuthorId() {
         // given
         Long authorId = author1.getId();
         Long authorId2 = author2.getId();

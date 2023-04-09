@@ -32,6 +32,7 @@ class CommentRepositoryTest {
     private User user2;
     private User user3;
     private Post post;
+    private Post post2;
     private Comment comment;
     private Comment comment2;
     private Comment comment3;
@@ -84,6 +85,18 @@ class CommentRepositoryTest {
         );
 
 
+        post2 = new Post(
+                null,
+                "title2",
+                "description2dasdsa",
+                null,
+                null,
+                null,
+                null,
+                LocalDateTime.now().minusMinutes(10),
+                null
+        );
+
         comment = new Comment(
                 null,
                 null,
@@ -118,9 +131,9 @@ class CommentRepositoryTest {
         List<Comment> comments2 = new ArrayList<>(List.of(comment3));
 
 
-        user.setPosts(List.of(post));
+        user.setPosts(List.of(post, post2));
 
-        postRepository.save(post);
+        postRepository.saveAll(List.of(post, post2));
 
         userRepository.saveAll(List.of(user, user2, user3));
 
@@ -151,83 +164,165 @@ class CommentRepositoryTest {
 
 
     @Test
-    void itShouldFindAllCommentsByAuthorId() {
+    public void itShouldFindAllCommentsByAuthorId() {
         // given
         Long userId = user.getId();
         Long userId2 = user2.getId();
-        Long userId3 = user3.getId();
         int expectedSize = 2;
         int expectedSize2 = 1;
 
         // when
         List<Comment> comments = commentRepository.findAllCommentsByAuthorId(userId);
         List<Comment> comments2 = commentRepository.findAllCommentsByAuthorId(userId2);
-        List<Comment> comments3 = commentRepository.findAllCommentsByAuthorId(userId3);
         // then
         assertThat(comments.size()).isEqualTo(expectedSize);
         assertThat(comments2.size()).isEqualTo(expectedSize2);
-        assertThat(comments3.size()).isZero();
 
     }
 
     @Test
-    void itShouldFindCommentByIdAndAuthorId() {
+    public void ItShouldReturnEmptyListWhenAuthorDoesNotHaveAnyComments() {
+        // given
+        Long userId = user3.getId();
+
+        // when
+        List<Comment> comments = commentRepository.findAllCommentsByAuthorId(userId);
+
+        // then
+        assertThat(comments.size()).isZero();
+    }
+
+    @Test
+    public void ItShouldReturnEmptyListWhenAuthorDoesNotExists() {
+        // given
+        Long userId = 100L;
+
+        // when
+        List<Comment> comments = commentRepository.findAllCommentsByAuthorId(userId);
+
+        // then
+        assertThat(comments.size()).isZero();
+    }
+
+    @Test
+    public void itShouldFindCommentByIdAndAuthorId() {
         // given
         Long commentId = comment.getId();
         Long userId = user.getId();
-        Long userId2 = user2.getId();
         // when
         Optional<Comment> expected = commentRepository.findCommentByIdAndAuthorId(commentId, userId);
-        Optional<Comment> expected2 = commentRepository.findCommentByIdAndAuthorId(commentId, userId2);
         // then
         assertThat(expected.isPresent()).isTrue();
-        assertThat(expected2.isPresent()).isFalse();
-
-
+        assertThat(expected.get()).isEqualTo(comment);
     }
 
     @Test
-    void itShouldFindAllCommentsByPostId() {
+    public void itShouldNotFindCommentByIdAndAuthorIdWhenAuthorDoesNotHaveCommentWithGivenId() {
+        // given
+        Long commentId = comment.getId();
+        Long authorId = user2.getId();
+        // when
+        Optional<Comment> expected = commentRepository.findCommentByIdAndAuthorId(commentId, authorId);
+        // then
+        assertThat(expected.isPresent()).isFalse();
+    }
+
+    @Test
+    public void itShouldNotFindCommentByIdAndAuthorIdWhenAuthorDoesNotExists() {
+        //given
+        Long commentId = comment.getId();
+        Long authorId = 100L;
+
+        //when
+        Optional<Comment> expected = commentRepository.findCommentByIdAndAuthorId(commentId, authorId);
+
+        //then
+        assertThat(expected.isPresent()).isFalse();
+    }
+
+    @Test
+    public void itShouldFindAllCommentsByPostId() {
         // given
         Long postId = post.getId();
-        Long postId2 = 100L;
         int expectedSize = 3;
         // when
         List<Comment> expected = commentRepository.findAllCommentsByPostId(postId);
-        List<Comment> expected2 = commentRepository.findAllCommentsByPostId(postId2);
         // then
         assertThat(expected.size()).isEqualTo(expectedSize);
-        assertThat(expected2.size()).isZero();
     }
 
     @Test
-    void itShouldDeleteCommentByIdAndUserId() {
+    public void ItShouldReturnEmptyListWhenThereIsNoCommentsForPost() {
+        //given
+        Long postId = post2.getId();
+        //when
+        List<Comment> expected = commentRepository.findAllCommentsByPostId(postId);
+        //then
+        assertThat(expected.size()).isZero();
+    }
+
+    @Test
+    public void ItShouldReturnEmptyListWhenPostDoesNotExists() {
+        //given
+        Long postId = 100L;
+        //when
+        List<Comment> expected = commentRepository.findAllCommentsByPostId(postId);
+        //then
+        assertThat(expected.size()).isZero();
+    }
+
+    @Test
+    public void itShouldDeleteCommentByIdAndAuthorId() {
         //given
         Long commentId = comment.getId();
-        Long userId = user.getId();
+        Long authorId = user.getId();
         //when
-        commentRepository.deleteCommentByIdAndAuthorId(commentId, userId);
+        commentRepository.deleteCommentByIdAndAuthorId(commentId, authorId);
         //then
         assertThat(commentRepository.count()).isEqualTo(2);
 
     }
 
     @Test
-    void itShouldFindCommentByIdAndPostId() {
+    public void itShouldFindCommentByIdAndPostId() {
         //given
 
         Long commentId = comment.getId();
         Long postId = post.getId();
-        Long postId2 = 100L;
 
         //when
 
         Optional<Comment> expected = commentRepository.findCommentByIdAndPostId(commentId, postId);
-        Optional<Comment> expected2 = commentRepository.findCommentByIdAndPostId(commentId, postId2);
 
         //then
 
         assertThat(expected.isPresent()).isTrue();
-        assertThat(expected2.isPresent()).isFalse();
+        assertThat(expected.get()).isEqualTo(comment);
+    }
+
+    @Test
+    public void itShouldNotFindCommentByIdAndPostIdWhenCommentDoesNotExistsForPost() {
+        //given
+        Long commentId = 100L;
+        Long postId = post.getId();
+
+        //when
+        Optional<Comment> expected = commentRepository.findCommentByIdAndPostId(commentId, postId);
+
+        //then
+        assertThat(expected.isPresent()).isFalse();
+    }
+
+    @Test
+    public void itShouldNotFindCommentByIdAndPostIdWhenPostDoesNotExists() {
+        //given
+        Long commentId = comment.getId();
+        Long postId = 100L;
+
+        //when
+        Optional<Comment> expected = commentRepository.findCommentByIdAndPostId(commentId, postId);
+
+        //then
+        assertThat(expected.isPresent()).isFalse();
     }
 }

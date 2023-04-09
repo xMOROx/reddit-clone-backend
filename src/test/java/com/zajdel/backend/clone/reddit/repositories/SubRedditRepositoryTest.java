@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -24,9 +25,12 @@ class SubRedditRepositoryTest {
     User user2;
     User user3;
 
+    SubReddit subReddit1;
+    SubReddit subReddit2;
+    SubReddit subReddit3;
     @BeforeEach
     void setUp() {
-        SubReddit subReddit1 = new SubReddit(
+        subReddit1 = new SubReddit(
                 "Subreddit1",
                 "Description1",
                 null,
@@ -35,7 +39,7 @@ class SubRedditRepositoryTest {
                 null
         );
 
-        SubReddit subReddit2 = new SubReddit(
+        subReddit2 = new SubReddit(
                 "Subreddit2",
                 "Description2",
                 null,
@@ -44,7 +48,7 @@ class SubRedditRepositoryTest {
                 null
         );
 
-        SubReddit subReddit3 = new SubReddit(
+        subReddit3 = new SubReddit(
                 "Subreddit3",
                 "Description3",
                 null,
@@ -132,19 +136,64 @@ class SubRedditRepositoryTest {
         // given
         Long ownerId = user.getId();
         Long ownerId2 = user2.getId();
-        Long ownerId3 = user3.getId();
         int expectedSize1 = 2;
         int expectedSize2 = 1;
         // when
 
-        List<SubReddit> expected = underTest.findAllByOwnerId(ownerId);
-        List<SubReddit> expected2 = underTest.findAllByOwnerId(ownerId2);
-        List<SubReddit> expected3 = underTest.findAllByOwnerId(ownerId3);
+        List<SubReddit> expected = underTest.findAllSubredditsByOwnerId(ownerId);
+        List<SubReddit> expected2 = underTest.findAllSubredditsByOwnerId(ownerId2);
         // then
         assertThat(expected.size()).isEqualTo(expectedSize1);
         assertThat(expected2.size()).isEqualTo(expectedSize2);
-        assertThat(expected3.size()).isZero();
 
     }
 
+    @Test
+    public void ifShouldReturnEmptyListOfSubredditsWhenOwnerDoesNotHaveSubreddits() {
+        // given
+        Long ownerId = user3.getId();
+        // when
+
+        List<SubReddit> expected = underTest.findAllSubredditsByOwnerId(ownerId);
+        // then
+        assertThat(expected.size()).isZero();
+
+    }
+
+    @Test
+    public void ifShouldReturnEmptyListOfSubredditsWhenOwnerDoesNotExists() {
+        // given
+        Long ownerId = 100L;
+        // when
+
+        List<SubReddit> expected = underTest.findAllSubredditsByOwnerId(ownerId);
+        // then
+        assertThat(expected.size()).isZero();
+
+    }
+
+
+    @Test
+    public void ifShouldFindSubRedditByName() {
+        // given
+        String name = "Subreddit1";
+
+        // when
+        Optional<SubReddit> expected = underTest.findSubRedditByName(name);
+
+        // then
+        assertThat(expected.isPresent()).isTrue();
+        assertThat(expected.get()).isEqualTo(subReddit1);
+    }
+    @Test
+    public void ifShouldNotFindSubRedditByNameWhenUserDoesNotExists() {
+        // given
+        String name = "Subreddit4";
+
+        // when
+        Optional<SubReddit> expected = underTest.findSubRedditByName(name);
+
+        // then
+        assertThat(expected.isPresent()).isFalse();
+    }
 }
