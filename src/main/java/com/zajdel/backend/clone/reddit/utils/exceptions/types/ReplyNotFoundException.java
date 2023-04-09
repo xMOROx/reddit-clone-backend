@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
 public class ReplyNotFoundException extends RuntimeException {
     public ReplyNotFoundException(String message) {
-        super("Reply not found with " + message);
+        super("Reply not found with: " + message);
     }
 }

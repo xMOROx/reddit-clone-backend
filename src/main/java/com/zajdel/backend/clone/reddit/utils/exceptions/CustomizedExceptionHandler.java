@@ -1,13 +1,6 @@
 package com.zajdel.backend.clone.reddit.utils.exceptions;
 
-import com.zajdel.backend.clone.reddit.utils.exceptions.types.CommentNotFoundException;
-import com.zajdel.backend.clone.reddit.utils.exceptions.types.CommentNotFoundForPostException;
-import com.zajdel.backend.clone.reddit.utils.exceptions.types.CommentNotFoundForUserException;
-import com.zajdel.backend.clone.reddit.utils.exceptions.types.PostNotFoundException;
-import com.zajdel.backend.clone.reddit.utils.exceptions.types.PostNotFoundForUserException;
-import com.zajdel.backend.clone.reddit.utils.exceptions.types.ReplyNotFoundException;
-import com.zajdel.backend.clone.reddit.utils.exceptions.types.SubRedditNotFoundException;
-import com.zajdel.backend.clone.reddit.utils.exceptions.types.UserNotFoundException;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +20,7 @@ import java.util.Objects;
 public class CustomizedExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public final ResponseEntity<ErrorDetails> handleAllException(Exception ex, WebRequest request) throws Exception {
+    public final ResponseEntity<ErrorDetails> handleAllException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(
                 ex.getMessage(),
                 request.getDescription(false),
@@ -48,7 +41,7 @@ public class CustomizedExceptionHandler extends ResponseEntityExceptionHandler {
                     ReplyNotFoundException.class,
                     SubRedditNotFoundException.class}
     )
-    public final ResponseEntity<ErrorDetails> handleNotFoundExceptions(Exception ex, WebRequest request) throws Exception {
+    public final ResponseEntity<ErrorDetails> handleNotFoundExceptions(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(
                 ex.getMessage(),
                 request.getDescription(false),
@@ -57,8 +50,18 @@ public class CustomizedExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler({UserAlreadyExistsException.class, SubRedditAlreadyExistsException.class})
+    public final ResponseEntity<ErrorDetails> handleUserAlreadyExistsException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(
+                ex.getMessage(),
+                request.getDescription(false),
+                LocalDateTime.now());
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public final ResponseEntity<ErrorDetails> handleDataIntegrityViolation(Exception ex, WebRequest request) throws Exception {
+    public final ResponseEntity<ErrorDetails> handleDataIntegrityViolation(Exception ex, WebRequest request) {
         StringBuilder message = new StringBuilder();
         message.append("Data integrity violation: ");
 

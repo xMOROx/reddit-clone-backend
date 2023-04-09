@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class CommentNotFoundForUserException extends RuntimeException {
     public CommentNotFoundForUserException(String message) {
-        super("Comment with " + message + " not found for user");
+        super("Comment not found for user with: " + message);
     }
 }
