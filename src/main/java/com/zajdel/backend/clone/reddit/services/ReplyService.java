@@ -33,11 +33,12 @@ public class ReplyService {
         return reply;
     }
 
-    public void remove(Long id) {
+    public void removeReplyById(Long id) throws ReplyNotFoundException {
+        getReplyById(id);
         replyRepository.deleteById(id);
     }
 
-    public Long fullUpdate(Long replyId, Reply reply) {
+    public Long fullUpdateReplyById(Long replyId, Reply reply) {
         Reply replyToUpdate;
 
         try {
@@ -58,12 +59,8 @@ public class ReplyService {
         return replyId;
     }
 
-    public Long partialUpdate(Long postId, Reply reply) throws ReplyNotFoundException {
+    public Long partialUpdateReplyById(Long postId, Reply reply) throws ReplyNotFoundException {
         Reply replyToUpdate = getReplyById(postId);
-
-        if (reply.getParentComment() != null) {
-            replyToUpdate.setParentComment(reply.getParentComment());
-        }
 
         if (reply.getContent() != null) {
             replyToUpdate.setContent(reply.getContent());
@@ -76,6 +73,7 @@ public class ReplyService {
         if (reply.getLastModifiedDate() != null) {
             replyToUpdate.setLastModifiedDate(reply.getLastModifiedDate());
         }
+
         replyRepository.save(replyToUpdate);
 
         return postId;

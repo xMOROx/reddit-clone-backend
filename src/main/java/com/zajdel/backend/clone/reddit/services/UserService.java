@@ -2,10 +2,12 @@ package com.zajdel.backend.clone.reddit.services;
 
 import com.zajdel.backend.clone.reddit.entities.User;
 import com.zajdel.backend.clone.reddit.repositories.UserRepository;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.UserAlreadyExistsException;
 import com.zajdel.backend.clone.reddit.utils.exceptions.types.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -23,16 +25,27 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("id-" + id));
     }
 
-    public User createNewUser(User user) {
+    public User createNewUser(User user) throws UserAlreadyExistsException {
+        Optional<User> userByUsername = userRepository.findUserByUsername(user.getUsername());
+        Optional<User> userByEmail = userRepository.findUserByEmail(user.getEmail());
+        if (userByUsername.isPresent()) {
+            throw new UserAlreadyExistsException("User with username: " + user.getUsername() + " already exists");
+        }
+
+        if (userByEmail.isPresent()) {
+            throw new UserAlreadyExistsException("User with email: "+ user.getEmail() + " already exists");
+        }
+
         userRepository.save(user);
         return user;
     }
 
-    public void remove(Long id) {
+    public void removeUserById(Long id) throws UserNotFoundException {
+        getUserById(id);
         userRepository.deleteById(id);
     }
 
-    public Long fullUpdate(Long id, User user) {
+    public Long fullUpdateUserById(Long id, User user) {
         User userToUpdate;
         try {
             userToUpdate =  getUserById(id);
@@ -54,7 +67,7 @@ public class UserService {
         return userToUpdate.getId();
     }
 
-    public Long partialUpdate(Long id, User user) throws UserNotFoundException {
+    public Long partialUpdateUserById(Long id, User user) throws UserNotFoundException {
         User userToUpdate = getUserById(id);
 
         if (user.getUsername() != null) {
@@ -67,27 +80,9 @@ public class UserService {
             userToUpdate.setEmail(user.getEmail());
         }
 
-        if (user.getComments() != null) {
-            userToUpdate.setComments(user.getComments());
-        }
-
-        if (user.getPosts() != null) {
-            userToUpdate.setPosts(user.getPosts());
-        }
-
-        if (user.getVotes() != null) {
-            userToUpdate.setVotes(user.getVotes());
-        }
-
-        if (user.getReplies() != null) {
-            userToUpdate.setReplies(user.getReplies());
-        }
-
         userRepository.save(userToUpdate);
 
         return userToUpdate.getId();
     }
-
-
 
 }

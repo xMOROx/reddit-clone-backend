@@ -2,18 +2,22 @@ package com.zajdel.backend.clone.reddit.services;
 
 import com.zajdel.backend.clone.reddit.entities.Comment;
 import com.zajdel.backend.clone.reddit.repositories.CommentRepository;
-import com.zajdel.backend.clone.reddit.utils.exceptions.types.CommentNotFoundException;
-import com.zajdel.backend.clone.reddit.utils.exceptions.types.CommentNotFoundForUserException;
+import com.zajdel.backend.clone.reddit.repositories.PostRepository;
+import com.zajdel.backend.clone.reddit.repositories.UserRepository;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class CommentService {
-    CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
-
-    public CommentService(CommentRepository commentRepository) {
+    public CommentService(CommentRepository commentRepository, UserRepository userRepository, PostRepository postRepository) {
+        this.userRepository = userRepository;
+        this.postRepository = postRepository;
         this.commentRepository = commentRepository;
     }
 
@@ -23,7 +27,6 @@ public class CommentService {
 
 
     public Comment getCommentById(Long id) throws CommentNotFoundException {
-
         return commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException("id-" + id));
     }
 
@@ -36,11 +39,12 @@ public class CommentService {
         return comment;
     }
 
-    public void remove(Long id) {
+    public void removeCommentById(Long id) throws CommentNotFoundException {
+        getCommentById(id);
         commentRepository.deleteById(id);
     }
 
-    public Long fullUpdate(Long id, Comment comment) {
+    public Long fullUpdateCommentById(Long id, Comment comment) {
         Comment commentToUpdate;
         try {
             commentToUpdate = getCommentById(id);
@@ -62,7 +66,7 @@ public class CommentService {
         return commentToUpdate.getId();
     }
 
-    public Long partialUpdate(Long id, Comment comment) throws CommentNotFoundException {
+    public Long partialUpdateCommentById(Long id, Comment comment) throws CommentNotFoundException {
         Comment commentToUpdate = getCommentById(id);
 
         if (comment.getContent() != null) {
@@ -82,25 +86,31 @@ public class CommentService {
         return commentToUpdate.getId();
     }
 
-    public List<Comment> getCommentsByPostId(Long id) {
+    public List<Comment> getCommentsByPostId(Long id) throws PostNotFoundException {
+        postRepository.findById(id).orElseThrow(() -> new PostNotFoundException("id-" + id));
         return commentRepository.findAllCommentsByPostId(id);
     }
 
-    public List<Comment> getCommentsByUserId(Long id) {
+    public List<Comment> getCommentsByUserId(Long id) throws UserNotFoundException {
+        userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("id-" + id));
         return commentRepository.findAllCommentsByAuthorId(id);
     }
 
-    public Comment getCommentByIdAndUserId(Long id, Long userId) throws CommentNotFoundForUserException {
-        return commentRepository.findCommentByIdAndAuthorId(id, userId).orElseThrow(() -> new CommentNotFoundForUserException("id-" + id));
+    public Comment getCommentByIdAndUserId(Long id, Long userId) throws CommentNotFoundForUserException, UserNotFoundException {
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("id-" + userId));
+        return commentRepository.findCommentByIdAndAuthorId(id, userId).orElseThrow(() -> new CommentNotFoundForUserException("id-" + id + " and userId-" + userId));
     }
 
-    public void removeByUserId(Long id, Long userId) {
+    public Comment getCommentByIdAndPostId(Long id, Long postId) throws PostNotFoundException, CommentNotFoundForPostException {
+        postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("id-" + postId));
+        return commentRepository.findCommentByIdAndPostId(id, postId).orElseThrow(() -> new CommentNotFoundForPostException("id-" + id + " and postId-" + postId));
+    }
+    public void removeCommentByIdAndUserId(Long id, Long userId) throws CommentNotFoundForUserException, UserNotFoundException {
+        getCommentByIdAndUserId(id, userId);
         commentRepository.deleteCommentByIdAndAuthorId(id, userId);
     }
 
-    public Comment getCommentByPostIdAndCommentId(Long postId, Long commentId) {
-        return commentRepository.findCommentByIdAndPostId(commentId, postId).orElseThrow(() -> new CommentNotFoundException("id-" + commentId));
-    }
+
 
 
 }

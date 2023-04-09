@@ -2,8 +2,10 @@ package com.zajdel.backend.clone.reddit.services;
 
 import com.zajdel.backend.clone.reddit.entities.Post;
 import com.zajdel.backend.clone.reddit.repositories.PostRepository;
+import com.zajdel.backend.clone.reddit.repositories.UserRepository;
 import com.zajdel.backend.clone.reddit.utils.exceptions.types.PostNotFoundException;
 import com.zajdel.backend.clone.reddit.utils.exceptions.types.PostNotFoundForUserException;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.UserNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +14,10 @@ import java.util.List;
 @Service
 public class PostService {
     private final PostRepository postRepository;
-
-    public PostService(PostRepository postRepository) {
+    private final UserRepository userRepository;
+    public PostService(PostRepository postRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
+        this.userRepository = userRepository;
     }
 
     public List<Post> getAllPosts() {
@@ -26,7 +29,7 @@ public class PostService {
     }
 
     public Post createNewPost(Post post) {
-        if(post.getLastModifiedDate() == null) { // If is null then set it to createdDate
+        if (post.getLastModifiedDate() == null) {
             post.setLastModifiedDate(post.getCreatedDate());
         }
 
@@ -34,18 +37,15 @@ public class PostService {
         return post;
     }
 
-    public void remove(Long id) {
+    public void removePostById(Long id) throws PostNotFoundException {
+        getPostById(id);
         postRepository.deleteById(id);
     }
 
-    public void removeByUserId(Long id, Long userId)  {
-        postRepository.deletePostByIdAndAuthorId(id, userId);
-    }
-
-    public Long fullUpdate(Long postId, Post post) {
+    public Long fullUpdatePostById(Long postId, Post post) {
         Post postToUpdate;
         try {
-            postToUpdate =  getPostById(postId);
+            postToUpdate = getPostById(postId);
         } catch (PostNotFoundException e) {
             createNewPost(post);
             postToUpdate = post;
@@ -66,7 +66,7 @@ public class PostService {
         return postToUpdate.getId();
     }
 
-    public Long partialUpdate(Long postId, @NotNull Post post) throws PostNotFoundException {
+    public Long partialUpdatePostById(Long postId, @NotNull Post post) throws PostNotFoundException {
         Post postToUpdate = getPostById(postId);
 
         if (post.getTitle() != null) {
@@ -81,7 +81,7 @@ public class PostService {
         if (post.getLastModifiedDate() != null) {
             postToUpdate.setLastModifiedDate(post.getLastModifiedDate());
         }
-        if(post.getImagesUrl() != null) {
+        if (post.getImagesUrl() != null) {
             postToUpdate.setImagesUrl(post.getImagesUrl());
         }
 
@@ -89,11 +89,18 @@ public class PostService {
 
         return postToUpdate.getId();
     }
+    public Post getPostByIdForUserById(Long id, Long userId) throws PostNotFoundForUserException, UserNotFoundException {
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("id-" + userId));
+        return postRepository.findPostByIdAndAuthorId(id, userId)
+                .orElseThrow(() -> new PostNotFoundForUserException("Post id-" + id + "for user id-" + userId ));
 
-    public List<Post> getPostsByUserId(Long userId) {
+    }
+    public List<Post> getPostsByUserId(Long userId) throws UserNotFoundException, PostNotFoundForUserException {
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("id-" + userId));
         return postRepository.findAllPostsByAuthorId(userId);
     }
-    public Post getPostByIdForUserId(Long id, Long userId) throws PostNotFoundForUserException {
-        return postRepository.findPostByIdAndAuthorId(id, userId).orElseThrow(() -> new PostNotFoundForUserException("id-" + id));
+    public void removePostByUserId(Long id, Long userId) throws PostNotFoundForUserException, UserNotFoundException {
+        getPostByIdForUserById(id, userId);
+        postRepository.deletePostByIdAndAuthorId(id, userId);
     }
 }

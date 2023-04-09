@@ -2,19 +2,25 @@ package com.zajdel.backend.clone.reddit.services;
 
 import com.zajdel.backend.clone.reddit.entities.SubReddit;
 import com.zajdel.backend.clone.reddit.repositories.SubRedditRepository;
+import com.zajdel.backend.clone.reddit.repositories.UserRepository;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.SubRedditAlreadyExistsException;
 import com.zajdel.backend.clone.reddit.utils.exceptions.types.SubRedditNotFoundException;
+import com.zajdel.backend.clone.reddit.utils.exceptions.types.UserNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SubRedditService {
 
     private final SubRedditRepository subRedditRepository;
+    private final UserRepository userRepository;
 
-    public SubRedditService(SubRedditRepository subRedditRepository) {
+    public SubRedditService(SubRedditRepository subRedditRepository, UserRepository userRepository) {
         this.subRedditRepository = subRedditRepository;
+        this.userRepository = userRepository;
     }
 
     public List<SubReddit> getAllSubReddits() {
@@ -25,20 +31,28 @@ public class SubRedditService {
         return subRedditRepository.findById(id).orElseThrow(() -> new SubRedditNotFoundException("id-" + id));
     }
 
-    public SubReddit createNewSubReddit(SubReddit subReddit) {
+    public SubReddit createNewSubReddit(SubReddit subReddit) throws SubRedditAlreadyExistsException {
+        Optional<SubReddit> subRedditByName = subRedditRepository.findSubRedditByName(subReddit.getName());
+
+        if (subRedditByName.isPresent()) {
+            throw new SubRedditAlreadyExistsException("Subreddit already exists with name: " + subReddit.getName());
+        }
+
         subRedditRepository.save(subReddit);
         return subReddit;
     }
 
-    public List<SubReddit> getAllUserSubReddits(Long userId) {
-        return subRedditRepository.findAllByOwnerId(userId);
+    public List<SubReddit> getAllUserSubReddits(Long userId) throws UserNotFoundException {
+        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("id-" + userId));
+        return subRedditRepository.findAllSubredditsByOwnerId(userId);
     }
 
-    public void remove(Long id) {
+    public void removeSubRedditById(Long id) throws SubRedditNotFoundException {
+        getSubRedditById(id);
         subRedditRepository.deleteById(id);
     }
 
-    public Long fullUpdate(Long id, SubReddit subReddit) {
+    public Long fullUpdateSubRedditById(Long id, SubReddit subReddit) {
         SubReddit subRedditToUpdate;
         try {
             subRedditToUpdate = getSubRedditById(id);
@@ -58,7 +72,7 @@ public class SubRedditService {
         return subRedditToUpdate.getId();
     }
 
-    public Long partialUpdate(Long id, @NotNull SubReddit subReddit) throws SubRedditNotFoundException {
+    public Long partialUpdateSubRedditById(Long id, @NotNull SubReddit subReddit) throws SubRedditNotFoundException {
         SubReddit subRedditToUpdate = getSubRedditById(id);
 
         if (subReddit.getName() != null) {
