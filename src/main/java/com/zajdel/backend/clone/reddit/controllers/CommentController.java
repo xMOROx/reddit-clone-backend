@@ -85,7 +85,7 @@ public class CommentController {
      */
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Comment> deleteCommentById(@PathVariable Long id) {
-        commentService.remove(id);
+        commentService.removeCommentById(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -136,7 +136,7 @@ public class CommentController {
         comment.setAuthor(user);
         comment.setPost(post);
 
-        var updatedId = commentService.fullUpdate(commentId, comment);
+        var updatedId = commentService.fullUpdateCommentById(commentId, comment);
 
         if (Objects.equals(updatedId, commentId)) {
             return ResponseEntity.noContent().build();
@@ -170,7 +170,7 @@ public class CommentController {
         comment.setAuthor(user);
         comment.setPost(post);
 
-        var updatedId = commentService.partialUpdate(commentId, comment);
+        var updatedId = commentService.partialUpdateCommentById(commentId, comment);
 
         return ResponseEntity.noContent().build();
     }

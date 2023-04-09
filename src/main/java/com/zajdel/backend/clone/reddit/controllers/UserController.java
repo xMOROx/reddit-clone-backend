@@ -124,7 +124,7 @@ public class UserController {
      */
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<User> deleteUserById(@PathVariable Long id) throws UserNotFoundException {
-        userService.remove(id);
+        userService.removeUserById(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -138,7 +138,7 @@ public class UserController {
      */
     @PutMapping(path = "/{id}")
     public ResponseEntity<User> updateOrCreateUser(@PathVariable Long id, @Valid @RequestBody User user) throws UserNotFoundException {
-        Long updatedId = userService.fullUpdate(id, user);
+        Long updatedId = userService.fullUpdateUserById(id, user);
 
         if (Objects.equals(updatedId, id)) {
             return ResponseEntity.noContent().build();
@@ -161,7 +161,7 @@ public class UserController {
 
     @PatchMapping(path = "/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User user) throws UserNotFoundException {
-        Long updatedId = userService.partialUpdate(id, user);
+        Long updatedId = userService.partialUpdateUserById(id, user);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(updatedId).toUri();
 
@@ -201,7 +201,7 @@ public class UserController {
     @GetMapping(path = "/{id}/posts/{postId}")
     public ResponseEntity<PostModel> getPostById(@PathVariable Long id, @PathVariable Long postId) throws PostNotFoundForUserException, UserNotFoundException {
         var user = userService.getUserById(id);
-        var post = postService.getPostByIdForUserId(postId, id);
+        var post = postService.getPostByIdForUserById(postId, id);
 
         return Stream.of(post).map(postModelAssembler::toModel).map(ResponseEntity::ok).findFirst().orElseThrow(() -> new PostNotFoundException("id-" + postId + " for user id-" + id));
     }
@@ -242,7 +242,7 @@ public class UserController {
 
         post.setAuthor(user);
 
-        Long updatedId = postService.fullUpdate(postId, post);
+        Long updatedId = postService.fullUpdatePostById(postId, post);
 
         if (Objects.equals(updatedId, postId)) {
             return ResponseEntity.noContent().build();
@@ -267,7 +267,7 @@ public class UserController {
 
         post.setAuthor(user);
 
-        Long updatedId = postService.partialUpdate(postId, post);
+        Long updatedId = postService.partialUpdatePostById(postId, post);
 
         return ResponseEntity.noContent().build();
     }
@@ -285,9 +285,9 @@ public class UserController {
     public ResponseEntity<Post> deleteUserPost(@PathVariable Long id, @PathVariable Long postId) throws UserNotFoundException {
 
         var user = userService.getUserById(id); // check if user exists
-        var post = postService.getPostByIdForUserId(postId, id); // check if post exists for user
+        var post = postService.getPostByIdForUserById(postId, id); // check if post exists for user
 
-        postService.removeByUserId(postId, id);
+        postService.removePostByUserId(postId, id);
         return ResponseEntity.noContent().build();
     }
 
@@ -341,7 +341,7 @@ public class UserController {
         var user = userService.getUserById(id); // check if user exists
         var comment = commentService.getCommentByIdAndUserId(commentId, id); // check if comment exists for user
 
-        commentService.removeByUserId(commentId, id);
+        commentService.removeCommentByIdAndUserId(commentId, id);
         return ResponseEntity.noContent().build();
     }
 
@@ -361,7 +361,7 @@ public class UserController {
 
         comment.setAuthor(user);
 
-        Long updatedId = commentService.partialUpdate(commentId, comment);
+        Long updatedId = commentService.partialUpdateCommentById(commentId, comment);
 
         return ResponseEntity.noContent().build();
     }
@@ -421,7 +421,7 @@ public class UserController {
 
         subReddit.setOwner(user);
 
-        Long updatedId = subRedditService.fullUpdate(subRedditId, subReddit);
+        Long updatedId = subRedditService.fullUpdateSubRedditById(subRedditId, subReddit);
         if (Objects.equals(updatedId, subRedditId)) {
             return ResponseEntity.noContent().build();
         }
@@ -447,7 +447,7 @@ public class UserController {
 
         subReddit.setOwner(user);
 
-        Long updatedId = subRedditService.partialUpdate(subRedditId, subReddit);
+        Long updatedId = subRedditService.partialUpdateSubRedditById(subRedditId, subReddit);
         return ResponseEntity.noContent().build();
     }
 
@@ -465,7 +465,7 @@ public class UserController {
         var user = userService.getUserById(id); // check if user exists
         var subReddit = subRedditService.getSubRedditById(subRedditId); // check if subReddit exists
 
-        subRedditService.remove(subRedditId);
+        subRedditService.removeSubRedditById(subRedditId);
         return ResponseEntity.noContent().build();
     }
 

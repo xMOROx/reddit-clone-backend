@@ -69,7 +69,7 @@ public class SubRedditController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<SubRedditModel> deleteSubRedditById(@PathVariable Long id) {
-        subRedditService.remove(id);
+        subRedditService.removeSubRedditById(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -125,7 +125,7 @@ public class ReplyController {
         reply.setAuthor(user);
         reply.setParentComment(comment);
 
-        var updatedReplyId = replyService.fullUpdate(id, reply);
+        var updatedReplyId = replyService.fullUpdateReplyById(id, reply);
         if (Objects.equals(updatedReplyId, id)) {
             return ResponseEntity.noContent().build();
         }
@@ -158,7 +158,7 @@ public class ReplyController {
         reply.setAuthor(user);
         reply.setParentComment(comment);
 
-        var updatedReplyId = replyService.partialUpdate(id, reply);
+        var updatedReplyId = replyService.partialUpdateReplyById(id, reply);
         return ResponseEntity.noContent().build();
     }
 
@@ -170,7 +170,7 @@ public class ReplyController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Reply> deleteReply(@PathVariable Long id) {
-        replyService.remove(id);
+        replyService.removeReplyById(id);
         return ResponseEntity.noContent().build();
     }
 
