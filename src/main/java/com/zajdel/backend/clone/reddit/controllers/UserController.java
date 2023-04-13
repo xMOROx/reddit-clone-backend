@@ -96,7 +96,10 @@ public class UserController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<UserModel> getUserById(@PathVariable Long id) throws UserNotFoundException {
 
-        return Stream.of(userService.getUserById(id)).map(userModelAssembler::toModel).map(ResponseEntity::ok).findFirst().orElseThrow(() -> new UserNotFoundException("id-" + id));
+        return Stream.of(userService.getUserById(id)).map(userModelAssembler::toModel)
+                .map(ResponseEntity::ok)
+                .findFirst()
+                .orElseThrow(() -> new UserNotFoundException("id-" + id));
 
     }
 
@@ -203,7 +206,11 @@ public class UserController {
         var user = userService.getUserById(id);
         var post = postService.getPostByIdForUserById(postId, id);
 
-        return Stream.of(post).map(postModelAssembler::toModel).map(ResponseEntity::ok).findFirst().orElseThrow(() -> new PostNotFoundException("id-" + postId + " for user id-" + id));
+        return Stream.of(post)
+                .map(postModelAssembler::toModel)
+                .map(ResponseEntity::ok)
+                .findFirst()
+                .orElseThrow(() -> new PostNotFoundException("id-" + postId + " for user id-" + id));
     }
 
     /**
@@ -324,7 +331,10 @@ public class UserController {
         var user = userService.getUserById(id);
         var comment = commentService.getCommentByIdAndUserId(commentId, id);
 
-        return Stream.of(comment).map(commentModelAssembler::toModel).map(ResponseEntity::ok).findFirst().orElseThrow(() -> new CommentNotFoundException("id-" + commentId + " for user id-" + id));
+        return Stream.of(comment)
+                .map(commentModelAssembler::toModel)
+                .map(ResponseEntity::ok).findFirst()
+                .orElseThrow(() -> new CommentNotFoundException("id-" + commentId + " for user id-" + id));
     }
 
     /**

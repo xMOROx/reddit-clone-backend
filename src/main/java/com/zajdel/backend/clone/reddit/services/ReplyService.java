@@ -16,14 +16,28 @@ public class ReplyService {
         this.replyRepository = replyRepository;
     }
 
+    /**
+     * Get all replies
+     * @return List of all replies
+     */
     public List<Reply> getAllReplies() {
         return replyRepository.findAll();
     }
-
+    /**
+     * Get reply by id
+     * @param id id of reply
+     * @return Reply
+     * @throws ReplyNotFoundException If reply not found
+     */
     public Reply getReplyById(Long id) throws ReplyNotFoundException {
         return replyRepository.findById(id).orElseThrow(() -> new ReplyNotFoundException("id-" + id));
     }
 
+    /**
+     * Create new reply. If reply has no last modified date, it will be set to created date.
+     * @param reply Reply to create
+     * @return Created reply
+     */
     public Reply createNewReply(@NotNull Reply reply) {
         if (reply.getLastModifiedDate() == null) {
             reply.setLastModifiedDate(reply.getCreatedDate());
@@ -32,12 +46,22 @@ public class ReplyService {
         replyRepository.save(reply);
         return reply;
     }
-
+    /**
+     * Delete reply by id
+     * @param id id of reply
+     * @throws ReplyNotFoundException If reply not found
+     */
     public void removeReplyById(Long id) throws ReplyNotFoundException {
         getReplyById(id);
         replyRepository.deleteById(id);
     }
 
+    /**
+     * Update reply by id. If reply not found, it will be created.
+     * @param replyId id of reply
+     * @param reply Reply to update
+     * @return id of updated reply
+     */
     public Long fullUpdateReplyById(Long replyId, Reply reply) {
         Reply replyToUpdate;
 
@@ -58,7 +82,13 @@ public class ReplyService {
 
         return replyId;
     }
-
+    /**
+     * Partial update reply by id. If reply not found, it will not be created.
+     * @param postId id of reply
+     * @param reply Reply to update
+     * @return id of updated reply
+     * @throws ReplyNotFoundException If reply not found
+     */
     public Long partialUpdateReplyById(Long postId, Reply reply) throws ReplyNotFoundException {
         Reply replyToUpdate = getReplyById(postId);
 

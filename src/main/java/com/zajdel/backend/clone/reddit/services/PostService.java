@@ -19,15 +19,27 @@ public class PostService {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
     }
-
+    /**
+     * Get all posts
+     * @return List of posts
+     */
     public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
-
+    /**
+     * Get post by id
+     * @param id Post id
+     * @return Post
+     * @throws PostNotFoundException if post not found
+     */
     public Post getPostById(Long id) throws PostNotFoundException {
         return postRepository.findById(id).orElseThrow(() -> new PostNotFoundException("id-" + id));
     }
-
+    /**
+     * Create new post. If post has no last modified date, set it to created date.
+     * @param post Post
+     * @return Post
+     */
     public Post createNewPost(Post post) {
         if (post.getLastModifiedDate() == null) {
             post.setLastModifiedDate(post.getCreatedDate());
@@ -36,12 +48,21 @@ public class PostService {
         postRepository.save(post);
         return post;
     }
-
+    /**
+     * Remove post by id
+     * @param id Post id
+     * @throws PostNotFoundException if post not found
+     */
     public void removePostById(Long id) throws PostNotFoundException {
         getPostById(id);
         postRepository.deleteById(id);
     }
-
+    /**
+     * Update post by id. If post not found, create new post.
+     * @param postId Post id
+     * @param post Post
+     * @return Post id
+     */
     public Long fullUpdatePostById(Long postId, Post post) {
         Post postToUpdate;
         try {
@@ -65,7 +86,13 @@ public class PostService {
 
         return postToUpdate.getId();
     }
-
+    /**
+     * Partial update post by id.
+     * @param postId Post id
+     * @param post Post
+     * @return Post id
+     * @throws PostNotFoundException if post not found
+     */
     public Long partialUpdatePostById(Long postId, @NotNull Post post) throws PostNotFoundException {
         Post postToUpdate = getPostById(postId);
 
@@ -89,16 +116,38 @@ public class PostService {
 
         return postToUpdate.getId();
     }
+    /**
+     * Get post by id for user by id
+     * @param id Post id
+     * @param userId User id
+     * @return Post
+     * @throws PostNotFoundForUserException if post not found for user
+     * @throws UserNotFoundException if user not found
+     */
     public Post getPostByIdForUserById(Long id, Long userId) throws PostNotFoundForUserException, UserNotFoundException {
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("id-" + userId));
         return postRepository.findPostByIdAndAuthorId(id, userId)
                 .orElseThrow(() -> new PostNotFoundForUserException("Post id-" + id + "for user id-" + userId ));
 
     }
+    /**
+     * Get all posts by user id
+     * @param userId User id
+     * @return List of posts
+     * @throws UserNotFoundException if user not found
+     * @throws PostNotFoundForUserException if post not found for user
+     */
     public List<Post> getPostsByUserId(Long userId) throws UserNotFoundException, PostNotFoundForUserException {
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("id-" + userId));
         return postRepository.findAllPostsByAuthorId(userId);
     }
+    /**
+     * Remove post by id for user by id
+     * @param id Post id
+     * @param userId User id
+     * @throws PostNotFoundForUserException if post not found for user
+     * @throws UserNotFoundException if user not found
+     */
     public void removePostByUserId(Long id, Long userId) throws PostNotFoundForUserException, UserNotFoundException {
         getPostByIdForUserById(id, userId);
         postRepository.deletePostByIdAndAuthorId(id, userId);

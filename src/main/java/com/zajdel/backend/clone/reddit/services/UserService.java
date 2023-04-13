@@ -16,18 +16,32 @@ public class UserService {
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
+    /**
+     * Get all users
+     * @return List of all users
+     */
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-
+    /**
+     * Get user by id
+     * @param id User id
+     * @return User
+     * @throws UserNotFoundException if user with given id does not exist
+     */
     public User getUserById(Long id) throws UserNotFoundException {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("id-" + id));
     }
-
+    /**
+     * Create new user if user with given username or email does not exist, otherwise throw UserAlreadyExistsException
+     * @param user User to be created
+     * @return User
+     * @throws UserNotFoundException if user with given username does not exist
+     */
     public User createNewUser(User user) throws UserAlreadyExistsException {
         Optional<User> userByUsername = userRepository.findUserByUsername(user.getUsername());
         Optional<User> userByEmail = userRepository.findUserByEmail(user.getEmail());
+
         if (userByUsername.isPresent()) {
             throw new UserAlreadyExistsException("User with username: " + user.getUsername() + " already exists");
         }
@@ -39,12 +53,22 @@ public class UserService {
         userRepository.save(user);
         return user;
     }
-
+    /**
+     * Delete user by id
+     * @param id User id
+     * @throws UserNotFoundException if user with given id does not exist
+     */
     public void removeUserById(Long id) throws UserNotFoundException {
         getUserById(id);
         userRepository.deleteById(id);
     }
-
+    /**
+     * Update user by id. If user with given id does not exist, create new user
+     * @param id User id
+     * @param user User to be updated
+     * @return User id
+     * @throws UserNotFoundException if user with given id does not exist
+     */
     public Long fullUpdateUserById(Long id, User user) {
         User userToUpdate;
         try {
@@ -66,7 +90,13 @@ public class UserService {
 
         return userToUpdate.getId();
     }
-
+    /**
+     * Partial update user by id. If user with given id does not exist, throw UserNotFoundException
+     * @param id User id
+     * @param user User to be updated
+     * @return User id
+     * @throws UserNotFoundException if user with given id does not exist
+     */
     public Long partialUpdateUserById(Long id, User user) throws UserNotFoundException {
         User userToUpdate = getUserById(id);
 

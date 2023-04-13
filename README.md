@@ -4,42 +4,46 @@ Simple project showcasing basic REST methods using [![Spring][Spring.js]][Spring
 
 ## Rest Api
 
-### User 
+### User
+
 Requests
-*   ```GET /api/v1/users ``` 
-* Request  ```GET /api/v1/users/{id} ``` 
-* Request  ```POST /api/v1/users ```
-* Request  ```DELETE /api/v1/users/{id} ```
-* Request  ```PUT /api/v1/users/{id} ```
-* Request  ```PATCH /api/v1/users/{id} ```
-* Request  ```GET /api/v1/users/{id}/posts ```
-* Request  ```GET /api/v1/users/{id}/posts/{postId} ```
-* Request  ```POST /api/v1/users/{id}/posts ```
-* Request  ```DELETE /api/v1/users/{id}/posts/{postId} ```
-* Request  ```PUT /api/v1/users/{id}/posts/{postId} ```
-* Request  ```PATCH /api/v1/users/{id}/posts/{postId} ```
-* Request  ```GET /api/v1/users/{id}/comments ```
-* Request  ```GET /api/v1/users/{id}/comments/{commentId} ```
-* Request  ```DELETE /api/v1/users/{id}/comments/{commentId} ```
-* Request  ```PATCH /api/v1/users/{id}/comments/{commentId} ```
-* Request  ```GET /api/v1/users/{id}/subreddits ```
-* Request  ```GET /api/v1/users/{id}/subreddits/{subRedditId} ```
-* Request  ```POST /api/v1/users/{id}/subreddits ```
-* Request  ```DELETE /api/v1/users/{id}/posts/{postId} ```
-* Request  ```PUT /api/v1/users//{id}/subreddits/{subRedditId} ```
-* Request  ```PATCH /api/v1/users//{id}/subreddits/{subRedditId} ```
+
+* ```GET /api/v1/users```
+* ```GET /api/v1/users/{id}```
+* ```POST /api/v1/users```
+* ```DELETE /api/v1/users/{id}```
+* ```PUT /api/v1/users/{id}```
+* ```PATCH /api/v1/users/{id}```
+* ```GET /api/v1/users/{id}/posts```
+* ```GET /api/v1/users/{id}/posts/{postId}```
+* ```POST /api/v1/users/{id}/posts```
+* ```DELETE /api/v1/users/{id}/posts/{postId}```
+* ```PUT /api/v1/users/{id}/posts/{postId}```
+* ```PATCH /api/v1/users/{id}/posts/{postId}```
+* ```GET /api/v1/users/{id}/comments```
+* ```GET /api/v1/users/{id}/comments/{commentId}```
+* ```DELETE /api/v1/users/{id}/comments/{commentId}```
+* ```PATCH /api/v1/users/{id}/comments/{commentId}```
+* ```GET /api/v1/users/{id}/subreddits```
+* ```GET /api/v1/users/{id}/subreddits/{subRedditId}```
+* ```POST /api/v1/users/{id}/subreddits```
+* ```DELETE /api/v1/users/{id}/posts/{postId}```
+* ```PUT /api/v1/users//{id}/subreddits/{subRedditId}```
+* ```PATCH /api/v1/users//{id}/subreddits/{subRedditId}```
 
 ## Post
-* Request  ```GET /api/v1/posts ``` 
-* Request  ```GET /api/v1/posts/{id} ``` 
-* Request  ```GET /api/v1/posts/{id}/comments ``` 
+
+* ```GET /api/v1/posts```
+* ```GET /api/v1/posts/{id}```
+* ```GET /api/v1/posts/{id}/comments```
 
 ## Comment
-* Request  ```GET /api/v1/comments ``` 
-* Request  ```GET /api/v1/comments/{id} ``` 
-* Request  ```POST /api/v1/comments ```
-* Request  ```DELETE /api/v1/comments/{id} ```
-* Request  ```PATCH /api/v1/comments/{commentId}?userId={userId}&postId={postId} ```
-* Request  ```PUT /api/v1/comments/{commentId}?userId={userId}&postId={postId} ```
+
+* ```GET /api/v1/comments```
+* ```GET /api/v1/comments/{id}```
+* ```POST /api/v1/comments```
+* ```DELETE /api/v1/comments/{id}```
+* ```PATCH /api/v1/comments/{commentId}?userId={userId}&postId={postId}```
+* ```PUT /api/v1/comments/{commentId}?userId={userId}&postId={postId}```
 [Spring.js]: https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white
 [Spring-url]: https://spring.io/

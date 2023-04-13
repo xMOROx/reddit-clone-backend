@@ -22,15 +22,28 @@ public class SubRedditService {
         this.subRedditRepository = subRedditRepository;
         this.userRepository = userRepository;
     }
-
+    /**
+     * Get all subreddits
+     * @return all subreddits
+     */
     public List<SubReddit> getAllSubReddits() {
         return subRedditRepository.findAll();
     }
-
+    /**
+     * Get subreddit by id
+     * @param id subreddit id
+     * @return subreddit
+     * @throws SubRedditNotFoundException if subreddit not found
+     */
     public SubReddit getSubRedditById(Long id) throws SubRedditNotFoundException {
         return subRedditRepository.findById(id).orElseThrow(() -> new SubRedditNotFoundException("id-" + id));
     }
-
+    /**
+     * Create new subreddit. If subreddit already exists, throw exception. Otherwise, create new subreddit.
+     * @param subReddit subreddit to create
+     * @return created subreddit
+     * @throws SubRedditAlreadyExistsException if subreddit already exists
+     */
     public SubReddit createNewSubReddit(SubReddit subReddit) throws SubRedditAlreadyExistsException {
         Optional<SubReddit> subRedditByName = subRedditRepository.findSubRedditByName(subReddit.getName());
 
@@ -41,17 +54,32 @@ public class SubRedditService {
         subRedditRepository.save(subReddit);
         return subReddit;
     }
-
+    /**
+     * Get all subreddits by user id
+     * @param userId user id
+     * @return all subreddits by user id
+     * @throws UserNotFoundException if user not found
+     */
     public List<SubReddit> getAllUserSubReddits(Long userId) throws UserNotFoundException {
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("id-" + userId));
         return subRedditRepository.findAllSubredditsByOwnerId(userId);
     }
-
+    /**
+     * Delete subreddit by id
+     * @param id subreddit id
+     * @throws SubRedditNotFoundException if subreddit not found
+     */
     public void removeSubRedditById(Long id) throws SubRedditNotFoundException {
         getSubRedditById(id);
         subRedditRepository.deleteById(id);
     }
-
+    /**
+     * Update subreddit by id. If subreddit not found, create new subreddit
+     * @param id subreddit id
+     * @param subReddit subreddit to update
+     * @return updated subreddit id
+     * @throws SubRedditNotFoundException if subreddit not found
+     */
     public Long fullUpdateSubRedditById(Long id, SubReddit subReddit) {
         SubReddit subRedditToUpdate;
         try {
@@ -71,7 +99,13 @@ public class SubRedditService {
 
         return subRedditToUpdate.getId();
     }
-
+    /**
+     * Partial update subreddit by id. If subreddit not found, throw exception
+     * @param id subreddit id
+     * @param subReddit subreddit to update
+     * @return updated subreddit id
+     * @throws SubRedditNotFoundException if subreddit not found
+     */
     public Long partialUpdateSubRedditById(Long id, @NotNull SubReddit subReddit) throws SubRedditNotFoundException {
         SubReddit subRedditToUpdate = getSubRedditById(id);
 

@@ -20,16 +20,28 @@ public class CommentService {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
     }
-
+    /**
+     * Get all comments
+     * @return List of all comments
+     */
     public List<Comment> getAllComments() {
         return commentRepository.findAll();
     }
 
-
+    /**
+     * Get comment by id
+     * @param id Comment id
+     * @return Comment
+     * @throws CommentNotFoundException if comment not found
+     */
     public Comment getCommentById(Long id) throws CommentNotFoundException {
         return commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException("id-" + id));
     }
-
+    /**
+     * Create new comment
+     * @param comment Comment
+     * @return Comment
+     */
     public Comment createNewComment(Comment comment) {
         if (comment.getLastModifiedDate() == null) {
             comment.setLastModifiedDate(comment.getCreatedDate());
@@ -38,12 +50,21 @@ public class CommentService {
         commentRepository.save(comment);
         return comment;
     }
-
+    /**
+     * Remove comment by id
+     * @param id Comment id
+     * @throws CommentNotFoundException if comment not found
+     */
     public void removeCommentById(Long id) throws CommentNotFoundException {
         getCommentById(id);
         commentRepository.deleteById(id);
     }
-
+    /**
+     * Update comment by id or create new comment if not found
+     * @param id Comment id
+     * @param comment Comment
+     * @return Comment id
+     */
     public Long fullUpdateCommentById(Long id, Comment comment) {
         Comment commentToUpdate;
         try {
@@ -66,6 +87,13 @@ public class CommentService {
         return commentToUpdate.getId();
     }
 
+    /**
+     * Update partial comment by id
+     * @param id Comment id
+     * @param comment Comment
+     * @return Comment id
+     * @throws CommentNotFoundException if comment not found
+     */
     public Long partialUpdateCommentById(Long id, Comment comment) throws CommentNotFoundException {
         Comment commentToUpdate = getCommentById(id);
 
@@ -85,26 +113,57 @@ public class CommentService {
 
         return commentToUpdate.getId();
     }
-
+    /**
+     * Get all comments by post id
+     * @param id Post id
+     * @return List of comments
+     * @throws PostNotFoundException if post not found
+     */
     public List<Comment> getCommentsByPostId(Long id) throws PostNotFoundException {
         postRepository.findById(id).orElseThrow(() -> new PostNotFoundException("id-" + id));
         return commentRepository.findAllCommentsByPostId(id);
     }
-
+    /**
+     * Get all comments by user id
+     * @param id User id
+     * @return List of comments
+     * @throws UserNotFoundException if user not found
+     */
     public List<Comment> getCommentsByUserId(Long id) throws UserNotFoundException {
         userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("id-" + id));
         return commentRepository.findAllCommentsByAuthorId(id);
     }
-
+    /**
+     * Get comment by id and user id
+     * @param id Comment id
+     * @param userId User id
+     * @return Comment
+     * @throws CommentNotFoundForUserException if comment not found for user
+     * @throws UserNotFoundException if user not found
+     */
     public Comment getCommentByIdAndUserId(Long id, Long userId) throws CommentNotFoundForUserException, UserNotFoundException {
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("id-" + userId));
         return commentRepository.findCommentByIdAndAuthorId(id, userId).orElseThrow(() -> new CommentNotFoundForUserException("id-" + id + " and userId-" + userId));
     }
-
+    /**
+     * Get comment by id and post id
+     * @param id Comment id
+     * @param postId Post id
+     * @return Comment
+     * @throws CommentNotFoundForPostException if comment not found for post
+     * @throws PostNotFoundException if post not found
+     */
     public Comment getCommentByIdAndPostId(Long id, Long postId) throws PostNotFoundException, CommentNotFoundForPostException {
         postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("id-" + postId));
         return commentRepository.findCommentByIdAndPostId(id, postId).orElseThrow(() -> new CommentNotFoundForPostException("id-" + id + " and postId-" + postId));
     }
+    /**
+     * Remove comment by id and user id
+     * @param id Comment id
+     * @param userId User id
+     * @throws CommentNotFoundForUserException if comment not found for user
+     * @throws UserNotFoundException if user not found
+     */
     public void removeCommentByIdAndUserId(Long id, Long userId) throws CommentNotFoundForUserException, UserNotFoundException {
         getCommentByIdAndUserId(id, userId);
         commentRepository.deleteCommentByIdAndAuthorId(id, userId);

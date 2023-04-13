@@ -11,12 +11,42 @@ import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-
+    /**
+     * Find all comments by author id
+     * @param authorId author id
+     * @return list of comments
+     */
+    @Transactional
     List<Comment> findAllCommentsByAuthorId(Long authorId);
+    /**
+     * Find comment by id and author id
+     * @param id comment id
+     * @param authorId author id
+     * @return comment
+     */
+    @Transactional
     Optional<Comment> findCommentByIdAndAuthorId(Long id, Long authorId);
-    List<Comment> findAllCommentsByPostId(Long authorId);
+    /**
+     * Find all comments by post id
+     * @param postId post id
+     * @return list of comments
+     */
+    @Transactional
+    List<Comment> findAllCommentsByPostId(Long postId);
+    /**
+     * Delete comment by id and author id
+     * @param id comment id
+     * @param authorId author id
+     */
     @Transactional
     void deleteCommentByIdAndAuthorId(Long id, Long authorId);
+    /**
+     * Find comment by id and post id
+     * @param id comment id
+     * @param postId post id
+     * @return comment
+     */
+    @Transactional
     Optional<Comment> findCommentByIdAndPostId(Long id, Long postId);
 
 }
