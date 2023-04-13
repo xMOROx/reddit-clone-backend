@@ -109,7 +109,7 @@ public class ReplyController {
     /**
      * Update or create reply by id - full update. If reply not found, create new reply.
      *
-     * @param id        Reply id
+     * @param replyId        Reply id
      * @param reply     Reply object
      * @param commentId Comment id
      * @param userId    User id
@@ -117,16 +117,16 @@ public class ReplyController {
      * @throws CommentNotFoundException if comment not found
      * @throws UserNotFoundException    if user not found
      */
-    @PutMapping("/{id}")
-    public ResponseEntity<Reply> updateReply(@PathVariable Long id, @RequestBody @NotNull Reply reply, @RequestParam Long commentId, @RequestParam Long userId) throws CommentNotFoundException, UserNotFoundException {
+    @PutMapping("/{replyId}")
+    public ResponseEntity<Reply> updateReply(@PathVariable Long replyId, @RequestBody @NotNull Reply reply, @RequestParam Long commentId, @RequestParam Long userId) throws CommentNotFoundException, UserNotFoundException {
         var user = userService.getUserById(userId);
         var comment = commentService.getCommentById(commentId);
 
         reply.setAuthor(user);
         reply.setParentComment(comment);
 
-        var updatedReplyId = replyService.fullUpdateReplyById(id, reply);
-        if (Objects.equals(updatedReplyId, id)) {
+        var updatedReplyId = replyService.fullUpdateReplyById(replyId, reply);
+        if (Objects.equals(updatedReplyId, replyId)) {
             return ResponseEntity.noContent().build();
         }
 

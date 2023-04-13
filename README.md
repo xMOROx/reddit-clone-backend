@@ -43,7 +43,23 @@ Requests
 * ```GET /api/v1/comments/{id}```
 * ```POST /api/v1/comments```
 * ```DELETE /api/v1/comments/{id}```
-* ```PATCH /api/v1/comments/{commentId}?userId={userId}&postId={postId}```
 * ```PUT /api/v1/comments/{commentId}?userId={userId}&postId={postId}```
+* ```PATCH /api/v1/comments/{commentId}?userId={userId}&postId={postId}```
+
+## SubReddit
+
+* ```GET /api/v1/subreddits```
+* ```GET /api/v1/subreddits/{id}```
+* ```DELETE /api/v1/subreddits/{id}```
+
+## Reply
+
+* ```GET /api/v1/replies```
+* ```GET /api/v1/replies/{id}```
+* ```POST /api/v1/replies```
+* ```DELETE /api/v1/replies/{id}```
+* ```PUT /api/v1/replies/{replyId}?userId={userId}&commentId={commentId}```
+* ```PATCH /api/v1/replies/{replyId}?userId={userId}&commentId={commentId}```
+
 [Spring.js]: https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white
 [Spring-url]: https://spring.io/
