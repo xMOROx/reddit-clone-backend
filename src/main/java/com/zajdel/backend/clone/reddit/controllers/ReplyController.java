@@ -42,7 +42,10 @@ public class ReplyController {
 
     private final ReplyModelAssembler replyModelAssembler;
 
-    public ReplyController(ReplyService replyService, UserService userService, CommentService commentService, ReplyModelAssembler replyModelAssembler) {
+    public ReplyController(ReplyService replyService,
+                           UserService userService,
+                           CommentService commentService,
+                           ReplyModelAssembler replyModelAssembler) {
         this.replyService = replyService;
         this.userService = userService;
         this.commentService = commentService;
@@ -89,18 +92,18 @@ public class ReplyController {
      * @throws UserNotFoundException    if user not found
      */
     @PostMapping("")
-    public ResponseEntity<Reply> createReply(@RequestBody @NotNull Reply reply, @RequestParam Long userId, @RequestParam Long commentId) throws CommentNotFoundException, UserNotFoundException {
+    public ResponseEntity<Long> createReply(@RequestBody @NotNull Reply reply, @RequestParam Long userId, @RequestParam Long commentId) throws CommentNotFoundException, UserNotFoundException {
         var user = userService.getUserById(userId);
         var comment = commentService.getCommentById(commentId);
 
         reply.setAuthor(user);
         reply.setParentComment(comment);
 
-        replyService.createNewReply(reply);
+        Long createId = replyService.createNewReply(reply);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(reply.getId())
+                .buildAndExpand(createId)
                 .toUri();
 
         return ResponseEntity.created(location).build();
@@ -118,7 +121,7 @@ public class ReplyController {
      * @throws UserNotFoundException    if user not found
      */
     @PutMapping("/{replyId}")
-    public ResponseEntity<Reply> updateReply(@PathVariable Long replyId, @RequestBody @NotNull Reply reply, @RequestParam Long commentId, @RequestParam Long userId) throws CommentNotFoundException, UserNotFoundException {
+    public ResponseEntity<Long> updateReply(@PathVariable Long replyId, @RequestBody @NotNull Reply reply, @RequestParam Long commentId, @RequestParam Long userId) throws CommentNotFoundException, UserNotFoundException {
         var user = userService.getUserById(userId);
         var comment = commentService.getCommentById(commentId);
 
@@ -151,7 +154,7 @@ public class ReplyController {
      * @throws UserNotFoundException    if user not found
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<Reply> patchReply(@PathVariable Long id, @RequestBody @NotNull Reply reply, @RequestParam Long commentId, @RequestParam Long userId) throws ReplyNotFoundException, CommentNotFoundException, UserNotFoundException {
+    public ResponseEntity<Long> patchReply(@PathVariable Long id, @RequestBody @NotNull Reply reply, @RequestParam Long commentId, @RequestParam Long userId) throws ReplyNotFoundException, CommentNotFoundException, UserNotFoundException {
         var user = userService.getUserById(userId);
         var comment = commentService.getCommentById(commentId);
 
@@ -169,7 +172,7 @@ public class ReplyController {
      * @return Response no content
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Reply> deleteReply(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteReply(@PathVariable Long id) {
         replyService.removeReplyById(id);
         return ResponseEntity.noContent().build();
     }

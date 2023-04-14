@@ -44,7 +44,7 @@ public class SubRedditService {
      * @return created subreddit
      * @throws SubRedditAlreadyExistsException if subreddit already exists
      */
-    public SubReddit createNewSubReddit(SubReddit subReddit) throws SubRedditAlreadyExistsException {
+    public Long createNewSubReddit(SubReddit subReddit) throws SubRedditAlreadyExistsException {
         Optional<SubReddit> subRedditByName = subRedditRepository.findSubRedditByName(subReddit.getName());
 
         if (subRedditByName.isPresent()) {
@@ -52,7 +52,7 @@ public class SubRedditService {
         }
 
         subRedditRepository.save(subReddit);
-        return subReddit;
+        return subReddit.getId();
     }
     /**
      * Get all subreddits by user id
@@ -84,9 +84,11 @@ public class SubRedditService {
         SubReddit subRedditToUpdate;
         try {
             subRedditToUpdate = getSubRedditById(id);
+            subRedditToUpdate.setId(id);
         } catch (SubRedditNotFoundException e) {
-            createNewSubReddit(subReddit);
+            Long createdId = createNewSubReddit(subReddit);
             subRedditToUpdate = subReddit;
+            subRedditToUpdate.setId(createdId);
         }
 
         subRedditToUpdate.setName(subReddit.getName());

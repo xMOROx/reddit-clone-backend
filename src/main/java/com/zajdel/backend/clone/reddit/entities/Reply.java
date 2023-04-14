@@ -115,5 +115,7 @@ public class Reply {
         this.parentComment = comment;
     }
 
-
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

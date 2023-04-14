@@ -40,13 +40,13 @@ public class PostService {
      * @param post Post
      * @return Post
      */
-    public Post createNewPost(Post post) {
+    public Long createNewPost(Post post) {
         if (post.getLastModifiedDate() == null) {
             post.setLastModifiedDate(post.getCreatedDate());
         }
 
         postRepository.save(post);
-        return post;
+        return post.getId();
     }
     /**
      * Remove post by id
@@ -67,9 +67,11 @@ public class PostService {
         Post postToUpdate;
         try {
             postToUpdate = getPostById(postId);
+            postToUpdate.setId(postId);
         } catch (PostNotFoundException e) {
-            createNewPost(post);
+            Long createdId = createNewPost(post);
             postToUpdate = post;
+            postToUpdate.setId(createdId);
         }
 
         postToUpdate.setTitle(post.getTitle());

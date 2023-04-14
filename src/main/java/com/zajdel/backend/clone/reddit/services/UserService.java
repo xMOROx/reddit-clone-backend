@@ -38,7 +38,7 @@ public class UserService {
      * @return User
      * @throws UserNotFoundException if user with given username does not exist
      */
-    public User createNewUser(User user) throws UserAlreadyExistsException {
+    public Long createNewUser(User user) throws UserAlreadyExistsException {
         Optional<User> userByUsername = userRepository.findUserByUsername(user.getUsername());
         Optional<User> userByEmail = userRepository.findUserByEmail(user.getEmail());
 
@@ -51,7 +51,7 @@ public class UserService {
         }
 
         userRepository.save(user);
-        return user;
+        return user.getId();
     }
     /**
      * Delete user by id
@@ -73,9 +73,11 @@ public class UserService {
         User userToUpdate;
         try {
             userToUpdate =  getUserById(id);
+            userToUpdate.setId(id);
         } catch (UserNotFoundException e) {
-            createNewUser(user);
+            Long createdId  = createNewUser(user);
             userToUpdate = user;
+            userToUpdate.setId(createdId);
         }
 
         userToUpdate.setUsername(user.getUsername());

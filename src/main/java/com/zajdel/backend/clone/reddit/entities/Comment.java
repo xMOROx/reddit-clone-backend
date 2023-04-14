@@ -131,4 +131,7 @@ public class Comment {
         this.lastModifiedDate = lastModifiedDate;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

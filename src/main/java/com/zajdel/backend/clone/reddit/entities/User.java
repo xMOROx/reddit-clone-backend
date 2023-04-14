@@ -151,4 +151,7 @@ public class User {
         this.ownedSubreddits = ownedSubreddits;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

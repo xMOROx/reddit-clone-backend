@@ -40,7 +40,10 @@ public class CommentController {
     private final PostService postService;
     private final CommentModelAssembler commentModelAssembler;
 
-    public CommentController(CommentService commentService, UserService userService, PostService postService, CommentModelAssembler commentModelAssembler) {
+    public CommentController(CommentService commentService,
+                             UserService userService,
+                             PostService postService,
+                             CommentModelAssembler commentModelAssembler) {
         this.commentService = commentService;
         this.userService = userService;
         this.postService = postService;
@@ -84,7 +87,7 @@ public class CommentController {
      * @return Response no content
      */
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<Comment> deleteCommentById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCommentById(@PathVariable Long id) {
         commentService.removeCommentById(id);
         return ResponseEntity.noContent().build();
     }
@@ -99,19 +102,19 @@ public class CommentController {
      * @throws UserNotFoundException if user not found
      */
     @PostMapping(path = "")
-    public ResponseEntity<Comment> createCommentForPostPerUser(@RequestParam Long postId, @RequestParam Long userId, @RequestBody Comment comment) throws UserNotFoundException, PostNotFoundException {
+    public ResponseEntity<Long> createCommentForPostPerUser(@RequestParam Long postId, @RequestParam Long userId, @RequestBody Comment comment) throws UserNotFoundException, PostNotFoundException {
         var user = userService.getUserById(userId);
         var post = postService.getPostById(postId);
 
         comment.setAuthor(user);
         comment.setPost(post);
 
-        var savedComment = commentService.createNewComment(comment);
+        Long createdId = commentService.createNewComment(comment);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(savedComment.getId())
+                .buildAndExpand(createdId)
                 .toUri();
 
         return ResponseEntity.created(location).build();
@@ -129,7 +132,7 @@ public class CommentController {
      * @throws PostNotFoundException if post not found
      */
     @PutMapping(path = "/{commentId}")
-    public ResponseEntity<Comment> updateOrCreateCommentForPostPerUser(@RequestParam Long postId, @RequestParam Long userId, @RequestBody Comment comment, @PathVariable Long commentId) throws UserNotFoundException, PostNotFoundException {
+    public ResponseEntity<Long> updateOrCreateCommentForPostPerUser(@RequestParam Long postId, @RequestParam Long userId, @RequestBody Comment comment, @PathVariable Long commentId) throws UserNotFoundException, PostNotFoundException {
         var user = userService.getUserById(userId);
         var post = postService.getPostById(postId);
 
@@ -163,7 +166,7 @@ public class CommentController {
      * @throws PostNotFoundException if post not found
      */
     @PatchMapping(path = "/{commentId}")
-    public ResponseEntity<Comment> updateCommentForPostPerUser(@RequestParam Long postId, @RequestParam Long userId, @RequestBody Comment comment, @PathVariable Long commentId) throws UserNotFoundException, PostNotFoundException {
+    public ResponseEntity<Long> updateCommentForPostPerUser(@RequestParam Long postId, @RequestParam Long userId, @RequestBody Comment comment, @PathVariable Long commentId) throws UserNotFoundException, PostNotFoundException {
         var user = userService.getUserById(userId);
         var post = postService.getPostById(postId);
 

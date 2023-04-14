@@ -59,7 +59,14 @@ public class UserController {
     private final CommentModelAssembler commentModelAssembler;
     private final SubRedditModelAssembler subRedditModelAssembler;
 
-    public UserController(UserService userService, PostService postService, CommentService commentService, SubRedditService subRedditService, UserModelAssembler userModelAssembler, PostModelAssembler postModelAssembler, CommentModelAssembler commentModelAssembler, SubRedditModelAssembler subRedditModelAssembler) {
+    public UserController(UserService userService,
+                          PostService postService,
+                          CommentService commentService,
+                          SubRedditService subRedditService,
+                          UserModelAssembler userModelAssembler,
+                          PostModelAssembler postModelAssembler,
+                          CommentModelAssembler commentModelAssembler,
+                          SubRedditModelAssembler subRedditModelAssembler) {
 
         this.userService = userService;
         this.postService = postService;
@@ -110,10 +117,10 @@ public class UserController {
      * @return Response created with the URI location of the new user
      */
     @PostMapping(path = "")
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-        User savedUser = userService.createNewUser(user);
+    public ResponseEntity<Long> createUser(@Valid @RequestBody User user) {
+        Long id = userService.createNewUser(user);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(savedUser.getId()).toUri();
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
 
         return ResponseEntity.created(location).build();
     }
@@ -126,7 +133,7 @@ public class UserController {
      * @throws UserNotFoundException if the user does not exist
      */
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<User> deleteUserById(@PathVariable Long id) throws UserNotFoundException {
+    public ResponseEntity<Void> deleteUserById(@PathVariable Long id) throws UserNotFoundException {
         userService.removeUserById(id);
         return ResponseEntity.noContent().build();
     }
@@ -140,7 +147,7 @@ public class UserController {
      * @throws UserNotFoundException if the user does not exist
      */
     @PutMapping(path = "/{id}")
-    public ResponseEntity<User> updateOrCreateUser(@PathVariable Long id, @Valid @RequestBody User user) throws UserNotFoundException {
+    public ResponseEntity<Long> updateOrCreateUser(@PathVariable Long id, @Valid @RequestBody User user) throws UserNotFoundException {
         Long updatedId = userService.fullUpdateUserById(id, user);
 
         if (Objects.equals(updatedId, id)) {
@@ -158,12 +165,12 @@ public class UserController {
      *
      * @param id   as a PathVariable
      * @param user as a RequestBody
-     * @return Response created with the URI location of the new user
+     * @return Response created with the URI location
      * @throws UserNotFoundException if the user does not exist
      */
 
     @PatchMapping(path = "/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User user) throws UserNotFoundException {
+    public ResponseEntity<Long> updateUser(@PathVariable Long id, @Valid @RequestBody User user) throws UserNotFoundException {
         Long updatedId = userService.partialUpdateUserById(id, user);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(updatedId).toUri();
@@ -184,11 +191,6 @@ public class UserController {
     @GetMapping(path = "/{id}/posts")
     public ResponseEntity<CollectionModel<PostModel>> getAllPostsByUserId(@PathVariable Long id) throws UserNotFoundException {
         List<Post> posts = postService.getPostsByUserId(id);
-        System.out.println("-----------------------------------------------------------");
-        System.out.println("Posts: ");
-        System.out.println(posts);
-        System.out.println("-----------------------------------------------------------");
-
         return new ResponseEntity<>(postModelAssembler.toCollectionModel(posts), HttpStatus.OK);
     }
 
@@ -222,14 +224,14 @@ public class UserController {
      * @throws UserNotFoundException if the user does not exist
      */
     @PostMapping(path = "/{id}/posts")
-    public ResponseEntity<Post> createPost(@PathVariable Long id, @Valid @RequestBody Post post) throws UserNotFoundException {
+    public ResponseEntity<Long> createPost(@PathVariable Long id, @Valid @RequestBody Post post) throws UserNotFoundException {
         var user = userService.getUserById(id);
 
         post.setAuthor(user);
 
-        Post savedPost = postService.createNewPost(post);
+        Long postId = postService.createNewPost(post);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(savedPost.getId()).toUri();
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(postId).toUri();
 
         return ResponseEntity.created(location).build();
     }
@@ -244,7 +246,7 @@ public class UserController {
      * @throws UserNotFoundException if the user does not exist
      */
     @PutMapping(path = "/{id}/posts/{postId}")
-    public ResponseEntity<Post> updatePost(@PathVariable Long id, @PathVariable Long postId, @Valid @RequestBody Post post) throws UserNotFoundException {
+    public ResponseEntity<Long> updatePost(@PathVariable Long id, @PathVariable Long postId, @Valid @RequestBody Post post) throws UserNotFoundException {
         var user = userService.getUserById(id);
 
         post.setAuthor(user);
@@ -269,7 +271,7 @@ public class UserController {
      * @throws UserNotFoundException if the user does not exist
      */
     @PatchMapping(path = "/{id}/posts/{postId}")
-    public ResponseEntity<Post> partialUpdatePost(@PathVariable Long id, @PathVariable Long postId, @Valid @RequestBody Post post) throws UserNotFoundException {
+    public ResponseEntity<Long> partialUpdatePost(@PathVariable Long id, @PathVariable Long postId, @Valid @RequestBody Post post) throws UserNotFoundException {
         var user = userService.getUserById(id);
 
         post.setAuthor(user);
@@ -289,7 +291,7 @@ public class UserController {
      * @throws PostNotFoundForUserException if the post does not exist for the user
      */
     @DeleteMapping(path = "/{id}/posts/{postId}")
-    public ResponseEntity<Post> deleteUserPost(@PathVariable Long id, @PathVariable Long postId) throws UserNotFoundException {
+    public ResponseEntity<Void> deleteUserPost(@PathVariable Long id, @PathVariable Long postId) throws UserNotFoundException {
 
         var user = userService.getUserById(id); // check if user exists
         var post = postService.getPostByIdForUserById(postId, id); // check if post exists for user
@@ -347,7 +349,7 @@ public class UserController {
      * @throws CommentNotFoundForUserException if the comment does not exist
      */
     @DeleteMapping(path = "/{id}/comments/{commentId}")
-    public ResponseEntity<Comment> deleteUserComment(@PathVariable Long id, @PathVariable Long commentId) throws UserNotFoundException, CommentNotFoundForUserException {
+    public ResponseEntity<Void> deleteUserComment(@PathVariable Long id, @PathVariable Long commentId) throws UserNotFoundException, CommentNotFoundForUserException {
         var user = userService.getUserById(id); // check if user exists
         var comment = commentService.getCommentByIdAndUserId(commentId, id); // check if comment exists for user
 
@@ -366,7 +368,7 @@ public class UserController {
      * @throws CommentNotFoundForUserException if the comment does not exist
      */
     @PatchMapping(path = "/{id}/comments/{commentId}")
-    public ResponseEntity<Comment> updateCommentForUser(@PathVariable Long id, @PathVariable Long commentId, @Valid @RequestBody Comment comment) throws UserNotFoundException, CommentNotFoundForUserException {
+    public ResponseEntity<Long> updateCommentForUser(@PathVariable Long id, @PathVariable Long commentId, @Valid @RequestBody Comment comment) throws UserNotFoundException, CommentNotFoundForUserException {
         var user = userService.getUserById(id);
 
         comment.setAuthor(user);
@@ -403,14 +405,14 @@ public class UserController {
      * @throws UserNotFoundException if the user does not exist
      */
     @PostMapping(path = "/{id}/subreddits")
-    public ResponseEntity<SubReddit> createSubReddit(@PathVariable Long id, @Valid @RequestBody SubReddit subReddit) throws UserNotFoundException {
+    public ResponseEntity<Long> createSubReddit(@PathVariable Long id, @Valid @RequestBody SubReddit subReddit) throws UserNotFoundException {
         var user = userService.getUserById(id);
 
         subReddit.setOwner(user);
 
-        SubReddit savedSubReddit = subRedditService.createNewSubReddit(subReddit);
+        Long createdId = subRedditService.createNewSubReddit(subReddit);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(savedSubReddit.getId()).toUri();
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(createdId).toUri();
 
         return ResponseEntity.created(location).build();
     }
@@ -426,7 +428,7 @@ public class UserController {
      * @throws SubRedditNotFoundException if the subreddit does not exist
      */
     @PutMapping(path = "/{id}/subreddits/{subRedditId}")
-    public ResponseEntity<SubReddit> updateSubReddit(@PathVariable Long id, @PathVariable Long subRedditId, @Valid @RequestBody SubReddit subReddit) throws UserNotFoundException, SubRedditNotFoundException {
+    public ResponseEntity<Long> updateSubReddit(@PathVariable Long id, @PathVariable Long subRedditId, @Valid @RequestBody SubReddit subReddit) throws UserNotFoundException, SubRedditNotFoundException {
         var user = userService.getUserById(id);
 
         subReddit.setOwner(user);
@@ -452,7 +454,7 @@ public class UserController {
      * @throws SubRedditNotFoundException if the subreddit does not exist
      */
     @PatchMapping(path = "/{id}/subreddits/{subRedditId}")
-    public ResponseEntity<SubReddit> partialUpdateSubReddit(@PathVariable Long id, @PathVariable Long subRedditId, @Valid @RequestBody SubReddit subReddit) throws UserNotFoundException, SubRedditNotFoundException {
+    public ResponseEntity<Long> partialUpdateSubReddit(@PathVariable Long id, @PathVariable Long subRedditId, @Valid @RequestBody SubReddit subReddit) throws UserNotFoundException, SubRedditNotFoundException {
         var user = userService.getUserById(id);
 
         subReddit.setOwner(user);
@@ -471,7 +473,7 @@ public class UserController {
      * @throws SubRedditNotFoundException if the subreddit does not exist
      */
     @DeleteMapping(path = "/{id}/subreddits/{subRedditId}")
-    public ResponseEntity<SubReddit> deleteSubReddit(@PathVariable Long id, @PathVariable Long subRedditId) throws UserNotFoundException, SubRedditNotFoundException {
+    public ResponseEntity<Void> deleteSubReddit(@PathVariable Long id, @PathVariable Long subRedditId) throws UserNotFoundException, SubRedditNotFoundException {
         var user = userService.getUserById(id); // check if user exists
         var subReddit = subRedditService.getSubRedditById(subRedditId); // check if subReddit exists
 

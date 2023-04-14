@@ -38,13 +38,13 @@ public class ReplyService {
      * @param reply Reply to create
      * @return Created reply
      */
-    public Reply createNewReply(@NotNull Reply reply) {
+    public Long createNewReply(@NotNull Reply reply) {
         if (reply.getLastModifiedDate() == null) {
             reply.setLastModifiedDate(reply.getCreatedDate());
         }
 
         replyRepository.save(reply);
-        return reply;
+        return reply.getId();
     }
     /**
      * Delete reply by id
@@ -67,9 +67,11 @@ public class ReplyService {
 
         try {
             replyToUpdate = getReplyById(replyId);
+            replyToUpdate.setId(replyId);
         } catch (ReplyNotFoundException e) {
-            createNewReply(reply);
+            Long createdId = createNewReply(reply);
             replyToUpdate = reply;
+            replyToUpdate.setId(createdId);
         }
 
         replyToUpdate.setContent(reply.getContent());

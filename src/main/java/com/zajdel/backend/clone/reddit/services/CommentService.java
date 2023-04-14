@@ -42,13 +42,13 @@ public class CommentService {
      * @param comment Comment
      * @return Comment
      */
-    public Comment createNewComment(Comment comment) {
+    public Long createNewComment(Comment comment) {
         if (comment.getLastModifiedDate() == null) {
             comment.setLastModifiedDate(comment.getCreatedDate());
         }
 
         commentRepository.save(comment);
-        return comment;
+        return comment.getId();
     }
     /**
      * Remove comment by id
@@ -69,9 +69,11 @@ public class CommentService {
         Comment commentToUpdate;
         try {
             commentToUpdate = getCommentById(id);
+            commentToUpdate.setId(id);
         } catch (CommentNotFoundException e) {
-            createNewComment(comment);
+            Long createdId = createNewComment(comment);
             commentToUpdate = comment;
+            commentToUpdate.setId(createdId);
         }
 
         commentToUpdate.setPost(comment.getPost());

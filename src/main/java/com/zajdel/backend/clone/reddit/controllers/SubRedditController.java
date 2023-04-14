@@ -26,7 +26,8 @@ public class SubRedditController {
     private final SubRedditService subRedditService;
     private final SubRedditModelAssembler subRedditModelAssembler;
 
-    public SubRedditController(SubRedditService subRedditService, SubRedditModelAssembler subRedditModelAssembler) {
+    public SubRedditController(SubRedditService subRedditService,
+                               SubRedditModelAssembler subRedditModelAssembler) {
         this.subRedditService = subRedditService;
         this.subRedditModelAssembler = subRedditModelAssembler;
     }
@@ -68,7 +69,7 @@ public class SubRedditController {
      * @return Response no content
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<SubRedditModel> deleteSubRedditById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSubRedditById(@PathVariable Long id) {
         subRedditService.removeSubRedditById(id);
         return ResponseEntity.noContent().build();
     }

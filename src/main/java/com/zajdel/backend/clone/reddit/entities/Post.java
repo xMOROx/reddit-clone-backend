@@ -147,4 +147,8 @@ public class Post {
     public void setImagesUrl(List<String> imagesUrl) {
         this.imagesUrl = imagesUrl;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

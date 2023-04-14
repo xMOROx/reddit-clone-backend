@@ -109,4 +109,8 @@ public class SubReddit {
     public void setOwner(User owner) {
         this.owner = owner;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

@@ -32,7 +32,10 @@ public class PostController {
     private final CommentModelAssembler commentModelAssembler;
 
 
-    public PostController(PostService postService, CommentService commentService, PostModelAssembler postModelAssembler, CommentModelAssembler commentModelAssembler) {
+    public PostController(PostService postService,
+                          CommentService commentService,
+                          PostModelAssembler postModelAssembler,
+                          CommentModelAssembler commentModelAssembler) {
         this.postService = postService;
         this.commentService = commentService;
         this.postModelAssembler = postModelAssembler;
